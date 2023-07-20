@@ -21,7 +21,7 @@ type Model struct {
 	DeletedAt *time.Time `json:"deletedAt" gorm:"index" json:"-"` // 删除时间
 }
 
-type BasePo struct {
+type Base struct {
 	Id         uint64                `gorm:"column:id;type:bigint(20) unsigned;primary_key" json:"id"`
 	CreateTime int64                 `gorm:"column:create_time;type:int(11) unsigned;default:0;NOT NULL" json:"create_time"`
 	UpdateTime int64                 `gorm:"column:update_time;type:int(11) unsigned;default:0;NOT NULL" json:"update_time"`
@@ -31,7 +31,7 @@ type BaseDeleteTimePo struct {
 	DeleteTime soft_delete.DeletedAt `gorm:"column:delete_time;type:int(11);DEFAULT:0;not null;"`
 }
 
-func (u *BasePo) BeforeCreate(tx *gorm.DB) (err error) {
+func (u *Base) BeforeCreate(tx *gorm.DB) (err error) {
 	if u.Id == 0 {
 		u.Id = snowflake.GlobalSnowflake.Generate().UInt64()
 	}
@@ -40,16 +40,16 @@ func (u *BasePo) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-func (u *BasePo) BeforeSave(tx *gorm.DB) (err error) {
+func (u *Base) BeforeSave(tx *gorm.DB) (err error) {
 	u.UpdateTime = time.Now().Unix()
 	return
 }
-func (u *BasePo) BeforeUpdate(tx *gorm.DB) (err error) {
+func (u *Base) BeforeUpdate(tx *gorm.DB) (err error) {
 	// 如果任意字段有变更
 	tx.Statement.SetColumn("UpdateTime", time.Now().Unix())
 	return
 }
-func (u *BasePo) CheckUpdateError(tx *gorm.DB) (err error) {
+func (u *Base) CheckUpdateError(tx *gorm.DB) (err error) {
 	if tx.Error != nil {
 		return tx.Error
 	}
