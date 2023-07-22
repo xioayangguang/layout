@@ -1,10 +1,10 @@
-package initialize
+package repository
 
 import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"gorm.io/gorm/utils"
-	"horse/pkg/sql_store"
+	"layout/pkg/contextValue"
 	"time"
 )
 
@@ -54,16 +54,23 @@ func after(db *gorm.DB) {
 	if !ok {
 		return
 	}
-	var sqlInfo sql_store.SQL
+	var sqlInfo contextValue.SQL
 	sqlInfo.Timestamp = CSTLayoutString()
 	sqlInfo.SQL = db.Dialector.Explain(db.Statement.SQL.String(), db.Statement.Vars...)
 	sqlInfo.Stack = utils.FileWithLineNum()
 	sqlInfo.Rows = db.Statement.RowsAffected
 	sqlInfo.CostSeconds = time.Since(ts).Seconds()
-	//sql_store.AppendSql(sqlInfo)
-	ctx := db.Statement.Context
-	if ginCtx, ok := ctx.(*gin.Context); ok {
-		ginCtx.Set("sql", sqlInfo)
+	if ginCtx, ok := db.Statement.Context.(*gin.Context); ok {
+		if sqls, exists := ginCtx.Get("sqls"); exists {
+			if sqlArray, ok := sqls.(contextValue.SQLS); ok {
+				sqlArray = append(sqlArray, sqlInfo)
+				ginCtx.Set("sqls", sqlArray)
+			}
+		} else {
+			ginCtx.Set("sqls", contextValue.SQLS{
+				sqlInfo,
+			})
+		}
 	}
 	return
 }

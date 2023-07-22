@@ -8,45 +8,38 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"layout/internal/handler"
-	"layout/internal/middleware"
-	"layout/internal/repository"
-	"layout/internal/server"
-	"layout/internal/service"
-	"layout/pkg/helper/sid"
-	"layout/pkg/log"
 	"github.com/google/wire"
-	"github.com/spf13/viper"
+	"layout/internal/handler"
+	"layout/internal/repository"
+	"layout/internal/router"
+	"layout/internal/service"
+)
+
+import (
+	_ "layout/pkg/configParse"
+	_ "layout/pkg/redis"
 )
 
 // Injectors from wire.go:
 
-func newApp(viperViper *viper.Viper, logger *log.Logger) (*gin.Engine, func(), error) {
-	jwt := middleware.NewJwt(viperViper)
-	handlerHandler := handler.NewHandler(logger)
-	sidSid := sid.NewSid()
-	serviceService := service.NewService(logger, sidSid, jwt)
-	db := repository.NewDB(viperViper)
-	client := repository.NewRedis(viperViper)
-	repositoryRepository := repository.NewRepository(db, client, logger)
+func newApp() (*gin.Engine, func(), error) {
+	serviceService := service.NewService()
+	db := repository.NewDB()
+	repositoryRepository := repository.NewRepository(db)
 	userRepository := repository.NewUserRepository(repositoryRepository)
 	userService := service.NewUserService(serviceService, userRepository)
-	userHandler := handler.NewUserHandler(handlerHandler, userService)
-	engine := server.NewServerHTTP(logger, jwt, userHandler)
+	userHandler := handler.NewUserHandler(userService)
+	engine := router.NewServerHTTP(userHandler)
 	return engine, func() {
 	}, nil
 }
 
 // wire.go:
 
-var ServerSet = wire.NewSet(server.NewServerHTTP)
+var ServerSet = wire.NewSet(router.NewServerHTTP)
 
-var SidSet = wire.NewSet(sid.NewSid)
-
-var JwtSet = wire.NewSet(middleware.NewJwt)
-
-var HandlerSet = wire.NewSet(handler.NewHandler, handler.NewUserHandler)
+var HandlerSet = wire.NewSet(handler.NewUserHandler)
 
 var ServiceSet = wire.NewSet(service.NewService, service.NewUserService)
 
-var RepositorySet = wire.NewSet(repository.NewDB, repository.NewRedis, repository.NewRepository, repository.NewUserRepository)
+var RepositorySet = wire.NewSet(repository.NewDB, repository.NewRepository, repository.NewUserRepository)

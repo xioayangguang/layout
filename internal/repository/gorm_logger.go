@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
-	"horse/pkg/logx"
+	"layout/pkg/logx"
 	"time"
 )
 

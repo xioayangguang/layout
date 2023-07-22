@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"layout/internal/handler"
+	"layout/internal/router"
 	"layout/mocks/service"
 
-	"layout/internal/server"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -19,7 +19,7 @@ import (
 	"layout/internal/middleware"
 	"layout/internal/model"
 	"layout/internal/service"
-	"layout/pkg/config"
+	"layout/pkg/configParse"
 	"layout/pkg/log"
 )
 
@@ -33,7 +33,7 @@ var hdl *handler.Handler
 func TestMain(m *testing.M) {
 	fmt.Println("begin")
 	os.Setenv("APP_CONF", "../../../config/local.yml")
-	conf := config.NewConfig()
+	conf := configParse.NewConfig()
 
 	logger := log.NewLog(conf)
 	hdl = handler.NewHandler(logger)
@@ -140,12 +140,12 @@ func TestUserHandler_UpdateProfile(t *testing.T) {
 }
 
 func setupRouter(mockUserService *mock_service.MockUserService) *gin.Engine {
-	conf := config.NewConfig()
+	conf := configParse.NewConfig()
 	logger := log.NewLog(conf)
 	jwt := middleware.NewJwt(conf)
 	userHandler := handler.NewUserHandler(hdl, mockUserService)
 	gin.SetMode(gin.TestMode)
-	router := server.NewServerHTTP(logger, jwt, userHandler)
+	router := router.NewServerHTTP(logger, jwt, userHandler)
 	return router
 }
 

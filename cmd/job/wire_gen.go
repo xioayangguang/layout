@@ -7,15 +7,23 @@
 package main
 
 import (
+	"github.com/google/wire"
 	"layout/internal/job"
-	"layout/pkg/log"
-	"github.com/spf13/viper"
+)
+
+import (
+	_ "layout/pkg/configParse"
+	_ "layout/pkg/redis"
 )
 
 // Injectors from wire.go:
 
-func newApp(viperViper *viper.Viper, logger *log.Logger) (*job.Job, func(), error) {
-	jobJob := job.NewJob(logger)
+func newApp() (*job.Job, func(), error) {
+	jobJob := job.NewJob()
 	return jobJob, func() {
 	}, nil
 }
+
+// wire.go:
+
+var JobSet = wire.NewSet(job.NewJob)

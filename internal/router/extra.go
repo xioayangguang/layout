@@ -4,14 +4,14 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/locxiang/gindebugcharts"
-	"horse/global"
-	"horse/response"
+	"layout/global"
+	"layout/internal/response"
 	"net/http"
 )
 
 func InitExtraRouter(r *gin.Engine) {
 
-	if true {
+	if global.Config.Debug {
 		gindebugcharts.Wrapper(r)
 		pprof.Register(r)
 	}

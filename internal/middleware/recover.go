@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
-	"horse/pkg/validate"
-	"horse/response"
 	"io/ioutil"
+	response2 "layout/internal/response"
+	"layout/internal/validate"
 	"log"
 	"net/http/httputil"
 	"runtime"
@@ -32,12 +32,12 @@ func Recover() gin.HandlerFunc {
 		defer func() {
 			if err := recover(); err != nil {
 				if err, ok := err.(*validate.ValidateError); ok {
-					response.FailWithCode(response.ParameterError, c)
+					response2.FailWithCode(c, response2.ParameterError)
 				} else {
 					stack := stack(3)
 					httpRequest, _ := httputil.DumpRequest(c.Request, true)
 					logger.Printf("[Recovery] %s panic recovered:\n%s\n%s\n%s%s", time.Now().Format("2006/01/02 - 15:04:05"), httpRequest, err, stack)
-					response.FailWithCode(response.Error, c)
+					response2.FailWithCode(c, response2.Error)
 				}
 				//c.Abort()
 			}

@@ -1,35 +1,28 @@
 package repository
 
 import (
-	"context"
-	"fmt"
-	"github.com/redis/go-redis/v9"
-	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
-	"layout/pkg/log"
+	"layout/global"
+	"layout/pkg/logx"
 	sLog "log"
 	"os"
 	"time"
 )
 
 type Repository struct {
-	db     *gorm.DB
-	rdb    *redis.Client
-	logger *log.Logger
+	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB, rdb *redis.Client, logger *log.Logger) *Repository {
+func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
-		db:     db,
-		rdb:    rdb,
-		logger: logger,
+		db: db,
 	}
 }
 
-func NewDB(conf *viper.Viper) *gorm.DB {
+func NewDB() *gorm.DB {
 	var loggerAdapter logger.Interface
 	if global.Config.Debug {
 		loggerAdapter = logger.New(
@@ -52,7 +45,7 @@ func NewDB(conf *viper.Viper) *gorm.DB {
 		Logger: loggerAdapter,
 	}
 
-	db, err := gorm.Open(mysql.Open(conf.GetString("data.mysql.user")), gormConf)
+	db, err := gorm.Open(mysql.Open(global.Config.Mysql.User), gormConf)
 	if err != nil {
 		panic(err)
 	}
@@ -62,26 +55,8 @@ func NewDB(conf *viper.Viper) *gorm.DB {
 		logx.Channel(logx.Default).Error("获取MySQL连接错误", err)
 		os.Exit(1)
 	}
-	conn.SetMaxIdleConns(conf.MaxIdleConns)
-	conn.SetMaxOpenConns(conf.MaxOpenConns)
+	conn.SetMaxIdleConns(global.Config.Mysql.MaxIdleConns)
+	conn.SetMaxOpenConns(global.Config.Mysql.MaxOpenConns)
 	_ = db.Use(&TracePlugin{})
 	return db
-}
-
-func NewRedis(conf *viper.Viper) *redis.Client {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     conf.GetString("data.redis.addr"),
-		Password: conf.GetString("data.redis.password"),
-		DB:       conf.GetInt("data.redis.db"),
-	})
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	_, err := rdb.Ping(ctx).Result()
-	if err != nil {
-		panic(fmt.Sprintf("redis error: %s", err.Error()))
-	}
-
-	return rdb
 }

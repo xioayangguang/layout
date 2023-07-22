@@ -7,17 +7,27 @@
 package main
 
 import (
+	"github.com/google/wire"
 	"layout/internal/migration"
 	"layout/internal/repository"
-	"layout/pkg/log"
-	"github.com/spf13/viper"
+)
+
+import (
+	_ "layout/pkg/configParse"
+	_ "layout/pkg/redis"
 )
 
 // Injectors from wire.go:
 
-func newApp(viperViper *viper.Viper, logger *log.Logger) (*migration.Migrate, func(), error) {
-	db := repository.NewDB(viperViper)
-	migrate := migration.NewMigrate(db, logger)
+func newApp() (*migration.Migrate, func(), error) {
+	db := repository.NewDB()
+	migrate := migration.NewMigrate(db)
 	return migrate, func() {
 	}, nil
 }
+
+// wire.go:
+
+var RepositorySet = wire.NewSet(repository.NewDB, repository.NewRepository, repository.NewUserRepository)
+
+var MigrateSet = wire.NewSet(migration.NewMigrate)

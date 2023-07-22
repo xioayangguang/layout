@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"horse/pkg/logx"
-	"layout/pkg/helper/sid"
+	"layout/pkg/helper/snowflake"
+
 	"net/http/httputil"
 	"strings"
 	"time"
@@ -86,19 +86,16 @@ func (w bodyWriter) Write(b []byte) (int, error) {
 var logStr = ""
 
 // RequestLog 请求响应日志处理
-func RequestLog(sid *sid.Sid) gin.HandlerFunc {
+func RequestLog() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		requestBefore(ctx, sid)
-		sqlBefore()
+		requestBefore(ctx)
 		ctx.Next()
 		requestAfter(ctx)
-		sqlAfter(ctx)
-		write()
 	}
 }
 
-func requestBefore(ctx *gin.Context, sid *sid.Sid) {
-	requestID, _ := sid.GenString()
+func requestBefore(ctx *gin.Context) {
+	requestID := snowflake.GlobalSnowflake.Generate().String()
 	httpRequest, _ := httputil.DumpRequest(ctx.Request, true)
 	logStr = fmt.Sprintf("requestID:%v\r\n", requestID)
 	logStr = fmt.Sprintf("%v%v\r\n", logStr, string(httpRequest))
@@ -118,19 +115,9 @@ func requestAfter(ctx *gin.Context) {
 	strB.WriteString(string(bw.bodyCache.Bytes()))
 	logStr = fmt.Sprintf("%v%v\r\n", logStr, strB.String())
 	logStr = fmt.Sprintf("%v%v\r\n", logStr, strings.Repeat("-", 100))
-}
 
-func sqlBefore() {
-	//sql_store.ClearSql()
-}
-
-func sqlAfter(ctx *gin.Context) {
 	if sqls, ok := ctx.Get("sql"); ok {
 		sqlLog, _ := json.Marshal(sqls)
 		logStr = fmt.Sprintf("%v%v\r\n\r\n", logStr, string(sqlLog))
 	}
-}
-
-func write() {
-	logx.Channel(logx.Request).Warning(logStr)
 }

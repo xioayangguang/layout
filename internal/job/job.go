@@ -3,33 +3,29 @@ package job
 import (
 	"fmt"
 	"github.com/go-co-op/gocron"
-	"layout/pkg/log"
+	"layout/pkg/logx"
 	"time"
 )
 
 type Job struct {
-	log *log.Logger
 }
 
-func NewJob(log *log.Logger) *Job {
-	return &Job{
-		log: log,
-	}
+func NewJob() *Job {
+	return &Job{}
 }
 func (j *Job) Run() {
 	s := gocron.NewScheduler(time.UTC)
 	_, err := s.CronWithSeconds("0/3 * * * * *").Do(func() {
-		j.log.Info("I'm a Task1.")
+		logx.Channel(logx.Job).Info("I'm a Task1.")
 	})
 	if err != nil {
 		fmt.Println(err)
 	}
 	_, err = s.Every("3s").Do(func() {
-		j.log.Info("I'm a Task2.")
+		logx.Channel(logx.Job).Info("I'm a Task2.")
 	})
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	s.StartBlocking()
 }

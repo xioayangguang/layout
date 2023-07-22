@@ -10,7 +10,6 @@ func CORSMiddleware() gin.HandlerFunc {
 		method := c.Request.Method
 		c.Header("Access-Control-Allow-Origin", c.GetHeader("Origin"))
 		c.Header("Access-Control-Allow-Credentials", "true")
-
 		if method == "OPTIONS" {
 			c.Header("Access-Control-Allow-Methods", c.GetHeader("Access-Control-Request-Method"))
 			c.Header("Access-Control-Allow-Headers", c.GetHeader("Access-Control-Request-Headers"))

@@ -3,21 +3,17 @@ package migration
 import (
 	"gorm.io/gorm"
 	"layout/internal/model"
-	"layout/pkg/log"
 )
 
 type Migrate struct {
-	db  *gorm.DB
-	log *log.Logger
+	db *gorm.DB
 }
 
-func NewMigrate(db *gorm.DB, log *log.Logger) *Migrate {
+func NewMigrate(db *gorm.DB) *Migrate {
 	return &Migrate{
-		db:  db,
-		log: log,
+		db: db,
 	}
 }
 func (m *Migrate) Run() {
 	m.db.AutoMigrate(&model.User{})
-	m.log.Info("AutoMigrate end")
 }

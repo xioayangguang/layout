@@ -1,15 +1,8 @@
 package main
 
-import (
-	"layout/pkg/config"
-	"layout/pkg/log"
-)
-
 func main() {
-	conf := config.NewConfig()
-	logger := log.NewLog(conf)
 
-	app, cleanup, err := newApp(conf, logger)
+	app, cleanup, err := newApp()
 	if err != nil {
 		panic(err)
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	mock_repository "layout/mocks/repository"
 	"os"
 	"testing"
 
@@ -13,8 +14,8 @@ import (
 	"layout/internal/middleware"
 	"layout/internal/model"
 	"layout/internal/service"
-	"layout/pkg/config"
-	"layout/pkg/helper/sid"
+	"layout/pkg/configParse"
+
 	"layout/pkg/log"
 )
 
@@ -27,7 +28,7 @@ func TestMain(m *testing.M) {
 
 	os.Setenv("APP_CONF", "../../../config/local.yml")
 
-	conf := config.NewConfig()
+	conf := configParse.NewConfig()
 
 	logger := log.NewLog(conf)
 	jwt := middleware.NewJwt(conf)
@@ -217,7 +218,7 @@ func TestUserService_GenerateToken(t *testing.T) {
 	userService := service.NewUserService(srv, mockUserRepo)
 
 	ctx := context.Background()
-	userId := "123"
+	userId := 123
 
 	result, err := userService.GenerateToken(ctx, userId)
 
