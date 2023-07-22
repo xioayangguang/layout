@@ -1,0 +1,791 @@
+definitions:
+  dto.LoginRequest:
+    properties:
+      address:
+        description: 用户钱包地址
+        type: string
+      message:
+        description: 签名消息
+        type: string
+      signature:
+        description: 签名
+        type: string
+    required:
+    - message
+    - signature
+    type: object
+  dto.S3uploadRequest:
+    properties:
+      suffix:
+        description: 文件后缀
+        type: string
+    type: object
+  dto.UserEditRequest:
+    properties:
+      avatar:
+        description: 个人头像
+        type: string
+      describe:
+        description: 个人描述
+        maxLength: 50
+        type: string
+      mail:
+        description: 电子邮箱
+        type: string
+      nickname:
+        description: 个人昵称
+        maxLength: 20
+        type: string
+    required:
+    - nickname
+    type: object
+info:
+  contact: {}
+  description: This is a PinDao Server pets
+  title: 赛马 API
+  version: 0.0.1
+paths:
+  /api/box/list:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 用户的盲盒列表
+      tags:
+      - 盲盒相关
+  /api/common/horses/metadata/{nft_token_id}:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: nft元数据
+      tags:
+      - 获取nft元数据接口
+  /api/horse/detail:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 马匹id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 马匹详情
+      tags:
+      - 马匹相关
+  /api/horse/list:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 马匹名称
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: 排序 0.默认 1.日期7天 2.日期30天
+        in: body
+        name: time_type
+        required: true
+        schema:
+          type: integer
+      - description: 马匹成长筛选 1.幼马 2.青年马 3.中年马 4.老年马
+        in: body
+        name: develop
+        required: true
+        schema:
+          type: array
+      - description: 参赛状态筛选 1.可参赛 -1.不可参赛
+        in: body
+        name: contestable
+        required: true
+        schema:
+          type: array
+      - description: 性别筛选 1.公 2.母
+        in: body
+        name: sex
+        required: true
+        schema:
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 马匹列表
+      tags:
+      - 马匹相关
+  /api/horse/listFilter:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 马匹列表(统计+筛选)
+      tags:
+      - 马匹相关
+  /api/horse/record:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 当前页默认1
+        in: body
+        name: page
+        required: true
+        schema:
+          type: integer
+      - description: 每页条数 默认16
+        in: body
+        name: page_size
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 交易记录
+      tags:
+      - 马匹相关
+  /api/horse/select:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 获取下拉筛选列表
+      tags:
+      - 马匹相关
+  /api/horse/unratedList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 关键字
+        in: body
+        name: keyword
+        schema:
+          type: string
+      - description: 场次id
+        in: body
+        name: match_game_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 获取用户未参赛马匹列表
+      tags:
+      - 马匹相关
+  /api/horse/update:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 马匹id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      - description: 马匹名称
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 修改马匹名称
+      tags:
+      - 马匹相关
+  /api/match/game/bonusList:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 当前页默认1
+        in: body
+        name: page
+        required: true
+        schema:
+          type: integer
+      - description: 每页条数 默认16
+        in: body
+        name: page_size
+        required: true
+        schema:
+          type: integer
+      - description: 马匹名称
+        in: body
+        name: name
+        schema:
+          type: string
+      - description: 马匹id
+        in: body
+        name: horse_id
+        schema:
+          type: integer
+      - description: 开始时间
+        in: body
+        name: start_time
+        schema:
+          type: string
+      - description: 结束时间
+        in: body
+        name: end_time
+        schema:
+          type: string
+      - description: 距离
+        in: body
+        name: distances
+        schema:
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 奖金(奖金列表)
+      tags:
+      - 比赛相关
+  /api/match/game/checkStatus:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 比赛场次id
+        in: body
+        name: match_game_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 验证比赛场次状态
+      tags:
+      - 比赛相关
+  /api/match/game/detail:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 比赛场次id
+        in: body
+        name: match_game_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 比赛场次详情
+      tags:
+      - 赛事相关
+  /api/match/game/end:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 比赛场次id
+        in: body
+        name: match_game_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 比赛结束
+      tags:
+      - 比赛相关
+  /api/match/game/list:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 分类id
+        in: body
+        name: category_id
+        schema:
+          type: integer
+      - description: 等级id
+        in: body
+        name: grade_id
+        schema:
+          type: integer
+      - description: 当前页默认1
+        in: body
+        name: page
+        required: true
+        schema:
+          type: integer
+      - description: 每页条数 默认16
+        in: body
+        name: page_size
+        required: true
+        schema:
+          type: integer
+      - description: 排序 0.默认  1.剩余门数从低到高 2.剩余门数从高到低 3.报名费从低到高 4.报名费从高到低 5.最近添加的
+        in: body
+        name: order
+        schema:
+          type: integer
+      - description: 是否需要报名费 0.默认 1.有费用 2.无费用
+        in: body
+        name: need_fee
+        schema:
+          type: integer
+      - description: 最低费用
+        in: body
+        name: min_fee
+        schema:
+          type: number
+      - description: 最高费用
+        in: body
+        name: max_fee
+        schema:
+          type: number
+      - description: int数组,匝门数
+        in: body
+        name: number
+        schema:
+          type: array
+      - description: int数组,限制条件,参赛条件类型 1.等级 2.年龄 3.品种 4.星级
+        in: body
+        name: restrictions
+        schema:
+          type: array
+      - description: int数组,距离
+        in: body
+        name: distances
+        schema:
+          type: array
+      - description: 是否开启只显示我的赛马  1.开启 0.不开启
+        in: body
+        name: my
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 比赛场次列表
+      tags:
+      - 比赛相关
+  /api/match/game/listFilter:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 比赛场次列表(分类+统计+筛选)
+      tags:
+      - 比赛相关
+  /api/match/game/outputList:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 当前页默认1
+        in: body
+        name: page
+        required: true
+        schema:
+          type: integer
+      - description: 1.开启 0.关闭 仅显示自己的比赛
+        in: body
+        name: only_self
+        required: true
+        schema:
+          type: integer
+      - description: 每页条数 默认16
+        in: body
+        name: page_size
+        required: true
+        schema:
+          type: integer
+      - description: 默认0， 查进行中传3，关闭就传0
+        in: body
+        name: status
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 比赛输出中
+      tags:
+      - 比赛相关
+  /api/match/game/process:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 比赛场次id
+        in: body
+        name: match_game_id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 比赛进行中
+      tags:
+      - 比赛相关
+  /api/match/game/resultFilter:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 1.开启 0.关闭 仅显示自己的比赛
+        in: body
+        name: only_self
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 结果(已结束比赛列表过滤和统计数据)
+      tags:
+      - 比赛相关
+  /api/match/game/resultList:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 当前页默认1
+        in: body
+        name: page
+        required: true
+        schema:
+          type: integer
+      - description: 1.开启 0.关闭 仅显示自己的比赛
+        in: body
+        name: only_self
+        required: true
+        schema:
+          type: integer
+      - description: 每页条数 默认16
+        in: body
+        name: page_size
+        required: true
+        schema:
+          type: integer
+      - description: 开始时间
+        in: body
+        name: start_time
+        schema:
+          type: string
+      - description: 结束时间
+        in: body
+        name: end_time
+        schema:
+          type: string
+      - description: 距离
+        in: body
+        name: distances
+        schema:
+          type: array
+      - description: 马匹名称
+        in: body
+        name: name
+        schema:
+          type: string
+      - description: 马匹id
+        in: body
+        name: horse_id
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 结果(已结束比赛列表)
+      tags:
+      - 比赛相关
+  /api/match/game/sign:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 马匹id
+        in: body
+        name: horse_id
+        required: true
+        schema:
+          type: integer
+      - description: 场次id
+        in: body
+        name: match_game_id
+        required: true
+        schema:
+          type: integer
+      - description: 闸门号
+        in: body
+        name: number
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 报名参加赛事场次
+      tags:
+      - 赛事相关
+  /api/match/game/signature:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 比赛场次id
+        in: body
+        name: match_game_id
+        required: true
+        schema:
+          type: integer
+      - description: 马匹id
+        in: body
+        name: horse_id
+        required: true
+        schema:
+          type: integer
+      - description: 钱包地址
+        in: body
+        name: address
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 比赛场次验证是否可以参与，并返回签名
+      tags:
+      - 比赛相关
+  /api/match/list/playing:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 马匹id
+        in: body
+        name: id
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 选择比赛
+      tags:
+      - 赛事相关
+  /api/user/edit-user:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 编辑用户信息
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserEditRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 编辑用户信息
+      tags:
+      - 前台用户信息
+  /api/user/info:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 获取当前用户信息
+      tags:
+      - 前台用户信息
+  /api/user/login-msg:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 用户钱包登录注册Nonce获取
+      tags:
+      - 前台用户信息
+  /api/user/wallet-login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 登录注册参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 用户钱包登录注册
+      tags:
+      - 前台用户信息
+  /common/s3/upload:
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 文件上传 参数名file
+      tags:
+      - 文件上传
+  /common/s3/upload-url:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: 参数
+        in: body
+        name: object
+        required: true
+        schema:
+          $ref: '#/definitions/dto.S3uploadRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":0,"data":{},"msg":"获取成功"}'
+          schema:
+            type: string
+      summary: 亚马逊获取上传地址
+      tags:
+      - 文件上传
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: x-token
+    type: apiKey
+swagger: "2.0"
