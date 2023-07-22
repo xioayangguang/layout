@@ -31,11 +31,8 @@ func TestMain(m *testing.M) {
 func TestUserService_Register_UsernameExists(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-
 	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
-
 	userService := service.NewUserService(srv, mockUserRepo)
-
 	ctx := context.Background()
 	req := &service.RegisterRequest{
 		Username: "testuser",

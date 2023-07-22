@@ -1,22 +1,25 @@
 //go:build wireinject
 // +build wireinject
 
-package main
+package wireinject
 
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
+	"github.com/spf13/viper"
 	"layout/internal/handler"
 	"layout/internal/repository"
 	"layout/internal/router"
 	"layout/internal/service"
-	_ "layout/pkg/config"
-	_ "layout/pkg/redis"
+	"layout/pkg/redis"
 )
+
+var _ = redis.InitRedis
 
 var ServerSet = wire.NewSet(router.NewServerHTTP)
 
 var HandlerSet = wire.NewSet(
+	handler.NewHandler,
 	handler.NewUserHandler,
 )
 
@@ -31,7 +34,7 @@ var RepositorySet = wire.NewSet(
 	repository.NewUserRepository,
 )
 
-func newApp() (*gin.Engine, func(), error) {
+func NewApp(*viper.Viper) (*gin.Engine, func(), error) {
 	panic(wire.Build(
 		ServerSet,
 		RepositorySet,

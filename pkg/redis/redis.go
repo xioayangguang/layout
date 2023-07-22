@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func init() {
+func InitRedis() *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     global.Config.Redis.Addr,
 		Password: global.Config.Redis.Password,
@@ -21,4 +21,5 @@ func init() {
 		panic(fmt.Sprintf("redis error: %s", err.Error()))
 	}
 	global.Redis = rdb
+	return rdb
 }

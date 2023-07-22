@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"layout/cmd/server/wireinject"
 	"layout/global"
+	"layout/pkg/config"
 	"layout/pkg/http"
 	"layout/pkg/logx"
 )
@@ -18,7 +20,7 @@ func main() {
 	global.GitHash = gitHash
 	global.BuildTime = buildTime
 	global.GoVersion = goVersion
-	app, cleanup, err := newApp()
+	app, cleanup, err := wireinject.NewApp(config.InitConfig())
 	if err != nil {
 		panic(err)
 	}

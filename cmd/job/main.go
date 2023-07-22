@@ -1,7 +1,9 @@
 package main
 
+import "layout/cmd/job/wireinject"
+
 func main() {
-	app, cleanup, err := newApp()
+	app, cleanup, err := wireinject.NewApp()
 	if err != nil {
 		panic(err)
 	}

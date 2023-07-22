@@ -1,7 +1,7 @@
 //go:build wireinject
 // +build wireinject
 
-package main
+package wireinject
 
 import (
 	"github.com/google/wire"
@@ -12,7 +12,7 @@ import (
 
 var JobSet = wire.NewSet(job.NewJob)
 
-func newApp() (*job.Job, func(), error) {
+func NewApp() (*job.Job, func(), error) {
 	panic(wire.Build(
 		JobSet,
 	))

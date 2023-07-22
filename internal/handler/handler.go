@@ -8,6 +8,10 @@ import (
 	"layout/pkg/contextValue"
 )
 
+func NewHandler() *Handler {
+	return &Handler{}
+}
+
 type Handler struct {
 }
 

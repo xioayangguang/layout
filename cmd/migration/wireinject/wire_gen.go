@@ -4,7 +4,7 @@
 //go:build !wireinject
 // +build !wireinject
 
-package main
+package wireinject
 
 import (
 	"github.com/google/wire"
@@ -19,7 +19,7 @@ import (
 
 // Injectors from wire.go:
 
-func newApp() (*migration.Migrate, func(), error) {
+func NewApp() (*migration.Migrate, func(), error) {
 	db := repository.NewDB()
 	migrate := migration.NewMigrate(db)
 	return migrate, func() {

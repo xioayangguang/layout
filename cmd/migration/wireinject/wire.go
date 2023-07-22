@@ -1,7 +1,7 @@
 //go:build wireinject
 // +build wireinject
 
-package main
+package wireinject
 
 import (
 	"github.com/google/wire"
@@ -18,7 +18,7 @@ var RepositorySet = wire.NewSet(
 )
 var MigrateSet = wire.NewSet(migration.NewMigrate)
 
-func newApp() (*migration.Migrate, func(), error) {
+func NewApp() (*migration.Migrate, func(), error) {
 	panic(wire.Build(
 		RepositorySet,
 		MigrateSet,

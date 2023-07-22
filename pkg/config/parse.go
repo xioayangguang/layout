@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func init() {
+func InitConfig() *viper.Viper {
 	path := os.Getenv("APP_CONF")
 	if path == "" {
 		flag.StringVar(&path, "conf", "config/local.yml", "config path, eg: -conf config/local.yml")
@@ -35,4 +35,5 @@ func init() {
 	if err := conf.Unmarshal(&global.Config); err != nil {
 		fmt.Println(err)
 	}
+	return conf
 }
