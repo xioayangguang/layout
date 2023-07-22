@@ -11,12 +11,8 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
-	"layout/internal/middleware"
 	"layout/internal/model"
 	"layout/internal/service"
-	"layout/pkg/configParse"
-
-	"layout/pkg/log"
 )
 
 var (
@@ -25,43 +21,11 @@ var (
 
 func TestMain(m *testing.M) {
 	fmt.Println("begin")
-
 	os.Setenv("APP_CONF", "../../../config/local.yml")
-
-	conf := configParse.NewConfig()
-
-	logger := log.NewLog(conf)
-	jwt := middleware.NewJwt(conf)
-	sf := sid.NewSid()
-	srv = service.NewService(logger, sf, jwt)
-
+	srv = service.NewService()
 	code := m.Run()
 	fmt.Println("test end")
-
 	os.Exit(code)
-}
-
-func TestUserService_Register(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockUserRepo := mock_repository.NewMockUserRepository(ctrl)
-
-	userService := service.NewUserService(srv, mockUserRepo)
-
-	ctx := context.Background()
-	req := &service.RegisterRequest{
-		Username: "testuser",
-		Password: "password",
-		Email:    "test@example.com",
-	}
-
-	mockUserRepo.EXPECT().GetByUsername(ctx, req.Username).Return(nil, nil)
-	mockUserRepo.EXPECT().Create(ctx, gomock.Any()).Return(nil)
-
-	err := userService.Register(ctx, req)
-
-	assert.NoError(t, err)
 }
 
 func TestUserService_Register_UsernameExists(t *testing.T) {

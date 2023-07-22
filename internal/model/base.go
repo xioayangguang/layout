@@ -12,10 +12,10 @@ const (
 )
 
 type Base struct {
-	Id        uint64 `json:"id" gorm:"primarykey"`            // 主键ID
-	CreatedAt int64  `json:"createdAt"`                       // 创建时间
-	UpdatedAt int64  `json:"updatedAt"`                       // 更新时间
-	DeletedAt int64  `json:"deletedAt" gorm:"index" json:"-"` // 删除时间
+	Id        uint64 `gorm:"column:id;type:bigint(20) unsigned;primary_key" json:"id"`
+	CreatedAt uint   `gorm:"column:created_at;type:int(11) unsigned;default:0;comment:创建时间;NOT NULL" json:"created_at"`
+	UpdatedAt uint   `gorm:"column:updated_at;type:int(11) unsigned;default:0;comment:更新时间;NOT NULL" json:"updated_at"`
+	DeletedAt uint   `gorm:"column:deleted_at;type:int(11) unsigned;default:0;comment:删除时间;NOT NULL" json:"deleted_at"`
 }
 
 func (u *Base) BeforeCreate(tx *gorm.DB) (err error) {
@@ -28,7 +28,7 @@ func (u *Base) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 func (u *Base) BeforeSave(tx *gorm.DB) (err error) {
-	u.UpdatedAt = time.Now().Unix()
+	u.UpdatedAt = uint(time.Now().Unix())
 	return
 }
 func (u *Base) BeforeUpdate(tx *gorm.DB) (err error) {

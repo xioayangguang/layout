@@ -1,4 +1,4 @@
-package configParse
+package config
 
 import (
 	"flag"
@@ -19,7 +19,6 @@ func init() {
 		path = "local"
 	}
 	fmt.Println("load conf file:", path)
-
 	conf := viper.New()
 	conf.SetConfigFile(path)
 	err := conf.ReadInConfig()

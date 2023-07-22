@@ -6,7 +6,7 @@ package main
 import (
 	"github.com/google/wire"
 	"layout/internal/job"
-	_ "layout/pkg/configParse"
+	_ "layout/pkg/config"
 	_ "layout/pkg/redis"
 )
 

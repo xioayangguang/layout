@@ -12,7 +12,7 @@ import (
 )
 
 import (
-	_ "layout/pkg/configParse"
+	_ "layout/pkg/config"
 	_ "layout/pkg/redis"
 )
 

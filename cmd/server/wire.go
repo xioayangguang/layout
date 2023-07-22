@@ -10,7 +10,7 @@ import (
 	"layout/internal/repository"
 	"layout/internal/router"
 	"layout/internal/service"
-	_ "layout/pkg/configParse"
+	_ "layout/pkg/config"
 	_ "layout/pkg/redis"
 )
 

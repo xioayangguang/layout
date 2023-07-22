@@ -16,11 +16,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"layout/internal/middleware"
 	"layout/internal/model"
 	"layout/internal/service"
-	"layout/pkg/configParse"
-	"layout/pkg/log"
 )
 
 var (
@@ -33,10 +30,10 @@ var hdl *handler.Handler
 func TestMain(m *testing.M) {
 	fmt.Println("begin")
 	os.Setenv("APP_CONF", "../../../config/local.yml")
-	conf := configParse.NewConfig()
-
-	logger := log.NewLog(conf)
-	hdl = handler.NewHandler(logger)
+	//conf := configParse.NewConfig()
+	//
+	//logger := log.NewLog(conf)
+	//hdl = handler.NewHandler(logger)
 
 	code := m.Run()
 	fmt.Println("test end")
@@ -53,15 +50,11 @@ func TestUserHandler_Register(t *testing.T) {
 		Password: "123456",
 		Email:    "xxx@gmail.com",
 	}
-
 	mockUserService := mock_service.NewMockUserService(ctrl)
 	mockUserService.EXPECT().Register(gomock.Any(), &params).Return(nil)
-
 	router := setupRouter(mockUserService)
 	paramsJson, _ := json.Marshal(params)
-
 	resp := performRequest(router, "POST", "/register", bytes.NewBuffer(paramsJson))
-
 	assert.Equal(t, resp.Code, http.StatusOK)
 	// Add assertions for the response body if needed
 }
@@ -93,12 +86,8 @@ func TestUserHandler_GetProfile(t *testing.T) {
 
 	mockUserService := mock_service.NewMockUserService(ctrl)
 	mockUserService.EXPECT().GetProfile(gomock.Any(), userId).Return(&model.User{
-		Id:       1,
-		UserId:   userId,
-		Username: "xxxxx",
 		Nickname: "xxxxx",
-		Password: "xxxxx",
-		Email:    "xxxxx@gmail.com",
+		Mail:     "xxxxx@gmail.com",
 	}, nil)
 
 	router := setupRouter(mockUserService)
@@ -140,12 +129,9 @@ func TestUserHandler_UpdateProfile(t *testing.T) {
 }
 
 func setupRouter(mockUserService *mock_service.MockUserService) *gin.Engine {
-	conf := configParse.NewConfig()
-	logger := log.NewLog(conf)
-	jwt := middleware.NewJwt(conf)
-	userHandler := handler.NewUserHandler(hdl, mockUserService)
+	userHandler := handler.NewUserHandler(mockUserService)
 	gin.SetMode(gin.TestMode)
-	router := router.NewServerHTTP(logger, jwt, userHandler)
+	router := router.NewServerHTTP(userHandler)
 	return router
 }
 

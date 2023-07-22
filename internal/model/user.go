@@ -2,7 +2,7 @@ package model
 
 type User struct {
 	Base
-	Uuid           int    `gorm:"column:uuid;type:int(10);default:0;comment:9位非0开头纯数字;NOT NULL" json:"uuid"`
+	Uuid           uint   `gorm:"column:uuid;type:int(10) unsigned;default:0;comment:9位非0开头纯数字;NOT NULL" json:"uuid"`
 	Serial         uint   `gorm:"column:serial;type:int(11) unsigned;default:0;comment:9位非0开头纯数字;NOT NULL" json:"serial"`
 	Nickname       string `gorm:"column:nickname;type:varchar(80);comment:用户昵称;NOT NULL" json:"nickname"`
 	Mail           string `gorm:"column:mail;type:varchar(255);comment:用户邮箱;NOT NULL" json:"mail"`
@@ -14,5 +14,5 @@ type User struct {
 }
 
 func (u *User) TableName() string {
-	return "users"
+	return "t_user"
 }
