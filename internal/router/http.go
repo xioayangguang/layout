@@ -20,7 +20,6 @@ func NewServerHTTP(
 	} else {
 		r = gin.Default()
 	}
-
 	api.InitApiRouter(r, userHandler)
 	h5.InitApiRouter(r, userHandler)
 	InitApiRouter(r, userHandler)
