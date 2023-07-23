@@ -12,29 +12,13 @@ import (
 	"layout/internal/service"
 )
 
-var ServerSet = wire.NewSet(router.NewServerHTTP)
-
-var HandlerSet = wire.NewSet(
-	handler.NewHandler,
-	handler.NewUserHandler,
-)
-
-var ServiceSet = wire.NewSet(
-	service.NewService,
-	service.NewUserService,
-)
-
-var RepositorySet = wire.NewSet(
-	repository.NewDB,
-	repository.NewRepository,
-	repository.NewUserRepository,
-)
+var ServerSet = wire.NewSet(router.NewServerHTTP, handler.StructProvider)
 
 func NewApp() (*gin.Engine, func(), error) {
 	panic(wire.Build(
 		ServerSet,
-		RepositorySet,
-		ServiceSet,
-		HandlerSet,
+		repository.ProviderSet,
+		service.ProviderSet,
+		handler.ProviderSet,
 	))
 }

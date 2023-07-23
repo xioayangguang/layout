@@ -5,7 +5,7 @@ import (
 	"layout/internal/handler"
 )
 
-func VisitorRouter(Router *gin.RouterGroup, userHandler handler.UserHandler) {
+func VisitorRouter(Router *gin.RouterGroup, router *handler.Router) {
 	{
 		indexRouter := Router.Group("")
 		_ = indexRouter

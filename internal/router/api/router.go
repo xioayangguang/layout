@@ -8,7 +8,7 @@ import (
 
 const SignSalt = "T^N5kJDOJ7seK3Z$"
 
-func InitApiRouter(Router *gin.Engine, userHandler handler.UserHandler) {
+func InitApiRouter(Router *gin.Engine, router *handler.Router) {
 	ApiRouter := Router.Group("api")
 	ApiRouter.Use(middleware.RequestLog())
 	ApiRouter.Use(middleware.Sign(SignSalt))
@@ -18,15 +18,15 @@ func InitApiRouter(Router *gin.Engine, userHandler handler.UserHandler) {
 	PrivateApiGroup := ApiRouter.Group("")
 	PrivateApiGroup.Use(middleware.MustTokenAuth())
 	PrivateApiGroup.Use(middleware.AccessRecords())
-	MustLoginRouter(PrivateApiGroup, userHandler)
+	MustLoginRouter(PrivateApiGroup, router)
 
 	//可以登录也可以不登录的路由
 	ShouldLoginApiGroup := ApiRouter.Group("")
 	ShouldLoginApiGroup.Use(middleware.ShouldTokenAuth())
 	ShouldLoginApiGroup.Use(middleware.AccessRecords())
-	ShouldLoginRouter(ShouldLoginApiGroup, userHandler)
+	ShouldLoginRouter(ShouldLoginApiGroup, router)
 
 	//可以不登陆的路由
 	PublicApiGroup := ApiRouter.Group("")
-	VisitorRouter(PublicApiGroup, userHandler)
+	VisitorRouter(PublicApiGroup, router)
 }

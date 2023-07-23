@@ -11,11 +11,6 @@ import (
 	"layout/internal/job"
 )
 
-import (
-	_ "layout/pkg/config"
-	_ "layout/pkg/redis"
-)
-
 // Injectors from wire.go:
 
 func NewApp() (*job.Job, func(), error) {

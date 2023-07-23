@@ -8,7 +8,7 @@ import (
 
 const SignSalt = "bWAOoXvIqxeiqk6*"
 
-func InitApiRouter(Router *gin.Engine, userHandler handler.UserHandler) {
+func InitApiRouter(Router *gin.Engine, router *handler.Router) {
 	H5Router := Router.Group("h5")
 	H5Router.Use(middleware.RequestLog())
 	H5Router.Use(middleware.CORSMiddleware())
@@ -19,13 +19,13 @@ func InitApiRouter(Router *gin.Engine, userHandler handler.UserHandler) {
 	PrivateApiGroup := H5Router.Group("")
 	PrivateApiGroup.Use(middleware.MustTokenAuth())
 	PrivateApiGroup.Use(middleware.AccessRecords())
-	MustLoginRouter(PrivateApiGroup, userHandler)
+	MustLoginRouter(PrivateApiGroup, router)
 	//可以登录也可以不登录的路由
 	ShouldLoginApiGroup := H5Router.Group("")
 	ShouldLoginApiGroup.Use(middleware.ShouldTokenAuth())
 	ShouldLoginApiGroup.Use(middleware.AccessRecords())
-	ShouldLoginRouter(ShouldLoginApiGroup, userHandler)
+	ShouldLoginRouter(ShouldLoginApiGroup, router)
 	//可以不登陆的路由
 	PublicApiGroup := H5Router.Group("")
-	VisitorRouter(PublicApiGroup, userHandler)
+	VisitorRouter(PublicApiGroup, router)
 }

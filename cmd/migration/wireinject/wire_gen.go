@@ -12,11 +12,6 @@ import (
 	"layout/internal/repository"
 )
 
-import (
-	_ "layout/pkg/config"
-	_ "layout/pkg/redis"
-)
-
 // Injectors from wire.go:
 
 func NewApp() (*migration.Migrate, func(), error) {

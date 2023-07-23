@@ -3,9 +3,21 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/google/wire"
 	"github.com/spf13/cast"
 	"layout/internal/validate"
 	"layout/pkg/contextValue"
+)
+
+var StructProvider = wire.Struct(new(Router), "*")
+
+type Router struct { //注册控制器
+	UserAPI UserHandler
+}
+
+var ProviderSet = wire.NewSet( //放入容器
+	NewHandler,
+	NewUserHandler,
 )
 
 func NewHandler() *Handler {

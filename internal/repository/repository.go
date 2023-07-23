@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/google/wire"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -10,6 +11,12 @@ import (
 	sLog "log"
 	"os"
 	"time"
+)
+
+var ProviderSet = wire.NewSet(
+	NewDB,
+	NewRepository,
+	NewUserRepository,
 )
 
 type Repository struct {

@@ -7,8 +7,6 @@ import (
 	"github.com/google/wire"
 	"layout/internal/migration"
 	"layout/internal/repository"
-	_ "layout/pkg/config"
-	_ "layout/pkg/redis"
 )
 
 var RepositorySet = wire.NewSet(

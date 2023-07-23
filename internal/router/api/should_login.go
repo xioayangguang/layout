@@ -5,7 +5,7 @@ import (
 	"layout/internal/handler"
 )
 
-func ShouldLoginRouter(Router *gin.RouterGroup, userHandler handler.UserHandler) {
+func ShouldLoginRouter(Router *gin.RouterGroup, router *handler.Router) {
 	{
 		indexRouter := Router.Group("user")
 		_ = indexRouter

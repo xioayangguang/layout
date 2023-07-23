@@ -9,9 +9,7 @@ import (
 	"layout/pkg/helper/rotatelogs"
 )
 
-func NewServerHTTP(
-	userHandler handler.UserHandler,
-) *gin.Engine {
+func NewServerHTTP(router *handler.Router) *gin.Engine {
 	var r *gin.Engine
 	if !global.Config.Debug {
 		gin.SetMode(gin.ReleaseMode)
@@ -20,9 +18,9 @@ func NewServerHTTP(
 	} else {
 		r = gin.Default()
 	}
-	api.InitApiRouter(r, userHandler)
-	h5.InitApiRouter(r, userHandler)
-	InitApiRouter(r, userHandler)
+	api.InitApiRouter(r, router)
+	h5.InitApiRouter(r, router)
+	InitApiRouter(r, router)
 	InitExtraRouter(r)
 	return r
 }
