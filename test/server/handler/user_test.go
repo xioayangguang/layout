@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"io"
 	"layout/cmd/server/wireinject"
-	"layout/pkg/config"
+	"layout/pkg/configParse"
+	"layout/pkg/redis"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -150,7 +151,9 @@ func TestUserHandler_Register(t *testing.T) {
 
 func setupRouter() *gin.Engine {
 	os.Setenv("APP_CONF", "../../../config/local.yml")
-	app, _, err := wireinject.NewApp(config.InitConfig())
+	configParse.InitConfig()
+	redis.InitRedis()
+	app, _, err := wireinject.NewApp()
 	if err != nil {
 		panic(err)
 	}

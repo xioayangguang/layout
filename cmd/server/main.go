@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"layout/cmd/server/wireinject"
 	"layout/global"
-	"layout/pkg/config"
+	"layout/pkg/configParse"
 	"layout/pkg/http"
 	"layout/pkg/logx"
+	"layout/pkg/redis"
 )
 
 // go build -ldflags "-X 'main.goVersion=$(go version)' -X 'main.gitHash=$(git show -s --format=%H)' -X 'main.buildTime=$(git show -s --format=%cd)'"
@@ -20,7 +21,9 @@ func main() {
 	global.GitHash = gitHash
 	global.BuildTime = buildTime
 	global.GoVersion = goVersion
-	app, cleanup, err := wireinject.NewApp(config.InitConfig())
+	configParse.InitConfig()
+	redis.InitRedis()
+	app, cleanup, err := wireinject.NewApp()
 	if err != nil {
 		panic(err)
 	}
