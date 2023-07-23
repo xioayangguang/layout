@@ -18,11 +18,11 @@ var (
 )
 
 func main() {
+	configParse.InitConfig()
 	global.GitHash = gitHash
 	global.BuildTime = buildTime
 	global.GoVersion = goVersion
-	configParse.InitConfig()
-	redis.InitRedis()
+	global.Redis = redis.InitRedis()
 	app, cleanup, err := wireinject.NewApp()
 	if err != nil {
 		panic(err)

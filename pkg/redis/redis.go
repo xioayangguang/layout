@@ -20,6 +20,5 @@ func InitRedis() *redis.Client {
 	if err != nil {
 		panic(fmt.Sprintf("redis error: %s", err.Error()))
 	}
-	global.Redis = rdb
 	return rdb
 }
