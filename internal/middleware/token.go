@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"layout/global"
-	response2 "layout/internal/response"
+	"layout/internal/response"
 	"layout/pkg/contextValue"
 	"time"
 )
@@ -15,18 +15,18 @@ func MustTokenAuth() gin.HandlerFunc {
 		c.Header("Server", "Tomcat8.0")
 		apiAuth := c.Request.Header.Get("ApiAuth")
 		if apiAuth == "" {
-			response2.FailWithCode(c, response2.TokenError)
+			response.FailWithCode(c, response.TokenError)
 			c.Abort()
 			return
 		}
 		if jsonStr, err := global.Redis.Get(context.Background(), apiAuth).Result(); err != nil {
-			response2.FailWithCode(c, response2.TokenError)
+			response.FailWithCode(c, response.TokenError)
 			c.Abort()
 		} else {
 			var userInfo contextValue.LoginUserInfo
 			err = json.Unmarshal([]byte(jsonStr), &userInfo)
 			if err != nil {
-				response2.FailWithCode(c, response2.Error)
+				response.FailWithCode(c, response.Error)
 				c.Abort()
 			} else {
 				c.Set("u_id", userInfo.Id)
@@ -45,13 +45,13 @@ func ShouldTokenAuth() gin.HandlerFunc {
 			c.Next()
 		} else {
 			if jsonStr, err := global.Redis.Get(context.Background(), apiAuth).Result(); err != nil {
-				response2.FailWithCode(c, response2.TokenError)
+				response.FailWithCode(c, response.TokenError)
 				c.Abort()
 			} else {
 				var userInfo contextValue.LoginUserInfo
 				err = json.Unmarshal([]byte(jsonStr), &userInfo)
 				if err != nil {
-					response2.FailWithCode(c, response2.TokenError)
+					response.FailWithCode(c, response.TokenError)
 					c.Abort()
 				} else {
 					c.Set("u_id", userInfo.Id)
