@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
-	"io/ioutil"
+	"io"
 	"layout/global"
-	response2 "layout/internal/response"
+	"layout/internal/response"
 	"layout/pkg/helper/md5"
 	"sort"
 )
@@ -22,8 +22,8 @@ func Sign(signSalt string) gin.HandlerFunc {
 		}
 		if sign != "" {
 			paramsMap := map[string]interface{}{}
-			data, _ := ioutil.ReadAll(c.Request.Body)
-			c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(data))
+			data, _ := io.ReadAll(c.Request.Body)
+			c.Request.Body = io.NopCloser(bytes.NewBuffer(data))
 			_ = json.Unmarshal(data, &paramsMap)
 			queryMap := c.Request.URL.Query()
 			for k := range queryMap {
@@ -41,7 +41,7 @@ func Sign(signSalt string) gin.HandlerFunc {
 				return
 			}
 		}
-		response2.FailWithCode(c, response2.SignError)
+		response.FailWithCode(c, response.SignError)
 		c.Abort()
 		return
 	}

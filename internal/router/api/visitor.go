@@ -7,7 +7,7 @@ import (
 
 func VisitorRouter(Router *gin.RouterGroup, router *handler.Router) {
 	{
-		indexRouter := Router.Group("")
-		_ = indexRouter
+		indexRouter := Router.Group("user")
+		indexRouter.POST("/login", router.UserAPI.Login)
 	}
 }

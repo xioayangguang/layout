@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"layout/pkg/helper/snowflake"
+	"layout/pkg/logx"
 
 	"net/http/httputil"
 	"strings"
@@ -115,9 +116,9 @@ func requestAfter(ctx *gin.Context) {
 	strB.WriteString(string(bw.bodyCache.Bytes()))
 	logStr = fmt.Sprintf("%v%v\r\n", logStr, strB.String())
 	logStr = fmt.Sprintf("%v%v\r\n", logStr, strings.Repeat("-", 100))
-
-	if sqls, ok := ctx.Get("sql"); ok {
+	if sqls, ok := ctx.Get("sqls"); ok {
 		sqlLog, _ := json.Marshal(sqls)
 		logStr = fmt.Sprintf("%v%v\r\n\r\n", logStr, string(sqlLog))
 	}
+	logx.Channel(logx.Request).Warning(logStr)
 }

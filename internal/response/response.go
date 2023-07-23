@@ -50,6 +50,14 @@ func FailWithCode(c *gin.Context, code int) {
 	Result(code, map[string]interface{}{}, c)
 }
 
+func ValidationErrors(c *gin.Context, msg string) {
+	c.JSON(http.StatusOK, Response{
+		ParameterError,
+		map[string]interface{}{},
+		msg,
+	})
+}
+
 func FailWithError(c *gin.Context, err error) {
 	code := berror.GetCode(err)
 	if code == -1 {

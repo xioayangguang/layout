@@ -49,7 +49,7 @@ func (base *Handler) ShouldBind(c *gin.Context, obj any) {
 		}
 	}
 	if err != nil {
-		panic(validate.NewValidateError("参数错误"))
+		panic(validate.NewValidateError("Parameter validation failed"))
 	}
 }
 func (base *Handler) GetPageParams(c *gin.Context) (int, int) {

@@ -9,6 +9,6 @@ func MustLoginRouter(Router *gin.RouterGroup, router *handler.Router) {
 	//用户信息
 	{
 		indexRouter := Router.Group("user")
-		_ = indexRouter
+		indexRouter.POST("getProfile", router.UserAPI.GetProfile)
 	}
 }

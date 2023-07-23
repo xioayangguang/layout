@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// 用户访问记录
+// AccessRecords 用户访问记录
 func AccessRecords() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if uInfo, ok := c.Get("u_info"); ok {

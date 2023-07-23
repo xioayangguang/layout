@@ -40,11 +40,9 @@ func (r *userRepository) Update(ctx context.Context, user *model.User) error {
 
 func (r *userRepository) GetByID(ctx context.Context, userId uint64) (*model.User, error) {
 	var user model.User
-	if err := r.db.Where("user_id = ?", userId).First(&user).Error; err != nil {
-
+	if err := r.db.WithContext(ctx).Where("id = ?", userId).First(&user).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to get user by ID")
 	}
-
 	return &user, nil
 }
 
