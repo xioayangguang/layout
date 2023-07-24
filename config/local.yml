@@ -2,13 +2,7 @@ debug: true
 loglevel: debug
 env: local
 http:
-  port: 8000
-security:
-  app_key: 123456
-  app_security: 123456
-jwt:
-  key: QQYnRFerJTSEcrfB89fw8prOaObmrch8
-
+  port: 80
 mysql:
   user: root:root@tcp(127.0.0.1:3306)/user?charset=utf8mb4&parseTime=True&loc=Local
   max-idle-conns: 10
@@ -20,12 +14,3 @@ redis:
   db: 0
   read_timeout: 0.2s
   write_timeout: 0.2s
-
-log:
-  log_level: debug
-  encoding: console           # json or console
-  log_file_dir: "./storage/logs/"
-  max_backups: 30              # 日志文件最多保存多少个备份
-  max_age: 7                   #  文件最多保存多少天
-  max_size: 1024               #  每个日志文件保存的最大尺寸 单位：M
-  compress: true               # 是否压缩

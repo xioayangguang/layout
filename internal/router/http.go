@@ -3,13 +3,14 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"layout/global"
-	"layout/internal/handler"
-	"layout/internal/router/api"
+	apphandler "layout/internal/handler/app"
+	h5handler "layout/internal/handler/h5"
+	"layout/internal/router/app"
 	"layout/internal/router/h5"
 	"layout/pkg/helper/rotatelogs"
 )
 
-func NewServerHTTP(router *handler.Router) *gin.Engine {
+func NewServerHTTP(apphandler *apphandler.Router, h5handler *h5handler.Router) *gin.Engine {
 	var r *gin.Engine
 	if !global.Config.Debug {
 		gin.SetMode(gin.ReleaseMode)
@@ -18,9 +19,9 @@ func NewServerHTTP(router *handler.Router) *gin.Engine {
 	} else {
 		r = gin.Default()
 	}
-	api.InitApiRouter(r, router)
-	h5.InitApiRouter(r, router)
-	InitApiRouter(r, router)
+	app.InitApiRouter(r, apphandler)
+	h5.InitApiRouter(r, h5handler)
+	InitApiRouter(r, apphandler, h5handler)
 	InitExtraRouter(r)
 	return r
 }

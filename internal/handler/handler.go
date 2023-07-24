@@ -9,15 +9,8 @@ import (
 	"layout/pkg/contextValue"
 )
 
-var StructProvider = wire.Struct(new(Router), "*")
-
-type Router struct { //注册控制器
-	UserAPI UserHandler
-}
-
 var ProviderSet = wire.NewSet( //放入容器
 	NewHandler,
-	NewUserHandler,
 )
 
 func NewHandler() *Handler {

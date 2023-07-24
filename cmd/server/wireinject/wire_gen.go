@@ -10,6 +10,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
 	"layout/internal/handler"
+	"layout/internal/handler/app"
+	"layout/internal/handler/h5"
 	"layout/internal/repository"
 	"layout/internal/router"
 	"layout/internal/service"
@@ -24,15 +26,16 @@ func NewApp() (*gin.Engine, func(), error) {
 	repositoryRepository := repository.NewRepository(db)
 	userRepository := repository.NewUserRepository(repositoryRepository)
 	userService := service.NewUserService(serviceService, userRepository)
-	userHandler := handler.NewUserHandler(handlerHandler, userService)
-	handlerRouter := &handler.Router{
-		UserAPI: userHandler,
+	userHandler := app.NewUserHandler(handlerHandler, userService)
+	appRouter := &app.Router{
+		AppUser: userHandler,
 	}
-	engine := router.NewServerHTTP(handlerRouter)
+	h5Router := &h5.Router{}
+	engine := router.NewServerHTTP(appRouter, h5Router)
 	return engine, func() {
 	}, nil
 }
 
 // wire.go:
 
-var ServerSet = wire.NewSet(router.NewServerHTTP, handler.StructProvider)
+var HandlerSet = wire.NewSet(handler.ProviderSet, app.ProviderSet, app.StructProvider, h5.ProviderSet, h5.StructProvider)

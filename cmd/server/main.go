@@ -17,6 +17,13 @@ var (
 	goVersion string
 )
 
+// @title YoYo API
+// @version 0.0.1
+// @description This is a YoYo Server pets
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name x-token
+// @BasePath /
 func main() {
 	configParse.InitConfig()
 	global.GitHash = gitHash

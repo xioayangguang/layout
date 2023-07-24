@@ -1,31 +1,32 @@
-package h5
+package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"layout/internal/handler/h5"
+	"layout/internal/handler/app"
 	"layout/internal/middleware"
 )
 
-const SignSalt = "bWAOoXvIqxeiqk6*"
+const SignSalt = "T^N5kJDOJ7seK3Z$"
 
-func InitApiRouter(Router *gin.Engine, router *h5.Router) {
-	H5Router := Router.Group("h5")
-	H5Router.Use(middleware.RequestLog())
-	H5Router.Use(middleware.CORSMiddleware())
-	H5Router.Use(middleware.Sign(SignSalt))
-	H5Router.Use(middleware.SpeedLimit())
-	H5Router.Use(middleware.Recover())
+func InitApiRouter(Router *gin.Engine, router *app.Router) {
+	ApiRouter := Router.Group("api")
+	ApiRouter.Use(middleware.RequestLog())
+	ApiRouter.Use(middleware.Sign(SignSalt))
+	ApiRouter.Use(middleware.SpeedLimit())
+	ApiRouter.Use(middleware.Recover())
 	//必须登录的路由
-	PrivateApiGroup := H5Router.Group("")
+	PrivateApiGroup := ApiRouter.Group("")
 	PrivateApiGroup.Use(middleware.MustTokenAuth())
 	PrivateApiGroup.Use(middleware.AccessRecords())
 	MustLoginRouter(PrivateApiGroup, router)
+
 	//可以登录也可以不登录的路由
-	ShouldLoginApiGroup := H5Router.Group("")
+	ShouldLoginApiGroup := ApiRouter.Group("")
 	ShouldLoginApiGroup.Use(middleware.ShouldTokenAuth())
 	ShouldLoginApiGroup.Use(middleware.AccessRecords())
 	ShouldLoginRouter(ShouldLoginApiGroup, router)
+
 	//可以不登陆的路由
-	PublicApiGroup := H5Router.Group("")
+	PublicApiGroup := ApiRouter.Group("")
 	VisitorRouter(PublicApiGroup, router)
 }

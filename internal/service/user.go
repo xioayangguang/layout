@@ -3,10 +3,11 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"github.com/pkg/errors"
 	"layout/global"
 	"layout/internal/model"
 	"layout/internal/repository"
+	"layout/internal/response"
+	"layout/pkg/berror"
 	"layout/pkg/contextValue"
 	"layout/pkg/helper/md5"
 	"strconv"
@@ -54,24 +55,27 @@ func NewUserService(service *Service, userRepo repository.UserRepository) UserSe
 	}
 }
 
+// Login 登录
 func (s *userService) Login(ctx context.Context, req *LoginRequest) (string, error) {
 	user, err := s.userRepo.GetByUsername(ctx, req.Username)
 	if err != nil || user == nil {
-		return "", errors.Wrap(err, "failed to get user by username")
+		return "", berror.New(response.LoginError)
 	}
-	//err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
-	if req.Password != "123456" {
-		return "", errors.Wrap(err, "failed to hash password")
+	if req.Password == "123456" {
+		token, _ := s.GenerateToken(ctx, user)
+		return token, nil
 	}
-	token, _ := s.GenerateToken(ctx, user)
-	return token, nil
+	if req.Password == "1234567" {
+		panic("你的系统崩溃了")
+	}
+	return "", berror.New(response.LoginError)
 }
 
 // GetProfile 获取用户信息
 func (s *userService) GetProfile(ctx context.Context, userId uint64) (*model.User, error) {
 	user, err := s.userRepo.GetByID(ctx, userId)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get user by ID")
+		return nil, berror.New(response.Error)
 	}
 	return user, nil
 }
@@ -80,20 +84,20 @@ func (s *userService) GetProfile(ctx context.Context, userId uint64) (*model.Use
 func (s *userService) UpdateProfile(ctx context.Context, userId uint64, req *UpdateProfileRequest) error {
 	user, err := s.userRepo.GetByID(ctx, userId)
 	if err != nil {
-		return errors.Wrap(err, "failed to get user by ID")
+		return berror.New(response.Error)
 	}
 	user.Mail = req.Email
 	user.Nickname = req.Nickname
 	if err = s.userRepo.Update(ctx, user); err != nil {
-		return errors.Wrap(err, "failed to update user")
+		return berror.New(response.Error)
 	}
 	return nil
 }
 
 // GenerateToken 生成用户token
 func (s *userService) GenerateToken(ctx context.Context, userInfo *model.User) (string, error) {
-	channel := "h5"            //此处演示写死
-	var duration time.Duration //此处演示写死
+	channel := "app"                        //此处演示写死
+	var duration time.Duration = 86400 * 30 //此处演示写死
 	token := md5.Md5(strconv.Itoa(int(time.Now().UnixNano())) + strconv.Itoa(int(userInfo.Id)))
 	jsonStr, _ := json.Marshal(contextValue.LoginUserInfo{
 		Id:             userInfo.Id,
@@ -104,10 +108,10 @@ func (s *userService) GenerateToken(ctx context.Context, userInfo *model.User) (
 		Serial:         userInfo.Serial,
 	})
 	strUserId := strconv.FormatUint(userInfo.Id, 10)
-	if oldToken, _ := global.Redis.HGet(context.Background(), channel, strUserId).Result(); oldToken != "" {
-		global.Redis.Del(context.Background(), oldToken)
+	if oldToken, _ := global.Redis.HGet(ctx, channel, strUserId).Result(); oldToken != "" {
+		global.Redis.Del(ctx, oldToken)
 	}
-	global.Redis.Set(context.Background(), token, jsonStr, duration*time.Second)
-	global.Redis.HSet(context.Background(), channel, strUserId, token)
+	global.Redis.Set(ctx, token, jsonStr, duration*time.Second)
+	global.Redis.HSet(ctx, channel, strUserId, token)
 	return token, nil
 }
