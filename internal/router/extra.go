@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/gin-contrib/pprof"
+	ginpprof "github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/locxiang/gindebugcharts"
 	"github.com/swaggo/files"
@@ -15,7 +15,7 @@ import (
 func InitExtraRouter(r *gin.Engine) {
 	if global.Config.Debug {
 		gindebugcharts.Wrapper(r)
-		pprof.Register(r)
+		ginpprof.Register(r)
 		r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	}
 	r.GET("/version", func(c *gin.Context) {

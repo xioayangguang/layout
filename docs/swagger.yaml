@@ -67,7 +67,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: 登录注册参数
+      - description: 参数
         in: body
         name: object
         required: true

@@ -14,10 +14,12 @@ const (
 	Database = "database"
 	Request  = "request"
 	Job      = "job"
+	Panic    = "panic"
 )
 
 var loggerFormatter = map[string]logrus.Formatter{
 	Request: &formatter.OnlyMsgFormatter{},
+	Panic:   &formatter.OnlyMsgFormatter{},
 }
 
 var loggerMap = map[string]*logrus.Logger{}

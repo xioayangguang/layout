@@ -21,7 +21,7 @@ type RegisterRequest struct {
 }
 
 type LoginRequest struct {
-	Username string `json:"username" binding:"required"`
+	Username string `json:"username" binding:"required"` //ddddd
 	Password string `json:"password" binding:"required"`
 }
 
@@ -66,7 +66,7 @@ func (s *userService) Login(ctx context.Context, req *LoginRequest) (string, err
 		return token, nil
 	}
 	if req.Password == "1234567" {
-		panic("你的系统崩溃了")
+		panic("你的系统崩溃了") //测试奔溃日志
 	}
 	return "", berror.New(response.LoginError)
 }

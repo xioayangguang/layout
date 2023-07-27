@@ -6,6 +6,7 @@ package http
 import (
 	"log"
 	"os"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -27,11 +28,7 @@ func initServer(address string, router *gin.Engine) server {
 	s.MaxHeaderBytes = 1 << 20
 	s.BeforeBegin = func(add string) {
 		log.Printf("Actual pid is %d", syscall.Getpid())
-		file, err := os.OpenFile("pid.log", os.O_CREATE)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer file.Close()
+		os.WriteFile("./scripts/pid.log", []byte(strconv.Itoa(syscall.Getpid())), os.ModePerm)
 	}
 	return s
 }

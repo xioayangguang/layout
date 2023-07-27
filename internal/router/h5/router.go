@@ -8,7 +8,7 @@ import (
 
 const SignSalt = "bWAOoXvIqxeiqk6*"
 
-func InitApiRouter(Router *gin.Engine, router *h5.Router) {
+func InitH5Router(Router *gin.Engine, router *h5.Router) {
 	H5Router := Router.Group("h5")
 	H5Router.Use(middleware.RequestLog())
 	H5Router.Use(middleware.CORSMiddleware())

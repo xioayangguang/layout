@@ -17,6 +17,10 @@ import (
 	"layout/internal/service"
 )
 
+import (
+	_ "layout/pkg/monitor"
+)
+
 // Injectors from wire.go:
 
 func NewApp() (*gin.Engine, func(), error) {

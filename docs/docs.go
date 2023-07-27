@@ -85,7 +85,7 @@ const docTemplate_swagger = `{
                 "summary": "用户登录注册",
                 "parameters": [
                     {
-                        "description": "登录注册参数",
+                        "description": "参数",
                         "name": "object",
                         "in": "body",
                         "required": true,

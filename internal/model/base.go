@@ -13,7 +13,7 @@ const (
 
 type Base struct {
 	Id        uint64 `gorm:"column:id;type:bigint(20) unsigned;primary_key" json:"id"`
-	CreatedAt uint   `gorm:"column:created_at;type:int(11) unsigned;default:0;comment:创建时间;NOT NULL" json:"created_at"`
+	CreatedAt uint   `gorm:"column:created_at;type:int(11) unsigned;default:0;comment:创建时间;NOT NULL" json:"created_at"` //
 	UpdatedAt uint   `gorm:"column:updated_at;type:int(11) unsigned;default:0;comment:更新时间;NOT NULL" json:"updated_at"`
 	DeletedAt uint   `gorm:"column:deleted_at;type:int(11) unsigned;default:0;comment:删除时间;NOT NULL" json:"deleted_at"`
 }

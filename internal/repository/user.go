@@ -24,17 +24,16 @@ func NewUserRepository(r *Repository) UserRepository {
 	}
 }
 func (r *userRepository) Create(ctx context.Context, user *model.User) error {
-	if err := r.db.Create(user).Error; err != nil {
+	if err := r.db.WithContext(ctx).Create(user).Error; err != nil {
 		return errors.Wrap(err, "failed to create user")
 	}
 	return nil
 }
 
 func (r *userRepository) Update(ctx context.Context, user *model.User) error {
-	if err := r.db.Save(user).Error; err != nil {
+	if err := r.db.WithContext(ctx).Save(user).Error; err != nil {
 		return errors.Wrap(err, "failed to update user")
 	}
-
 	return nil
 }
 

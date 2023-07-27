@@ -19,8 +19,8 @@ func NewServerHTTP(apphandler *apphandler.Router, h5handler *h5handler.Router) *
 	} else {
 		r = gin.Default()
 	}
-	app.InitApiRouter(r, apphandler)
-	h5.InitApiRouter(r, h5handler)
+	app.InitAppRouter(r, apphandler)
+	h5.InitH5Router(r, h5handler)
 	InitApiRouter(r, apphandler, h5handler)
 	InitExtraRouter(r)
 	return r

@@ -4,31 +4,26 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"io/ioutil"
 	"layout/internal/response"
 	"layout/internal/validate"
-	"log"
+	"layout/pkg/logx"
 	"net/http/httputil"
 	"runtime"
-	"time"
 )
 
 var (
-	dunno                 = []byte("???")
-	centerDot             = []byte("·")
-	dot                   = []byte(".")
-	slash                 = []byte("/")
-	logger    *log.Logger = nil
+	dunno     = []byte("???")
+	centerDot = []byte("·")
+	dot       = []byte(".")
+	slash     = []byte("/")
+	//logger    *log.Logger = nil
 )
-
-func init() {
-	logger = log.New(GetRotateLogs("panic"), "\r\n\r\n", log.LstdFlags)
-}
 
 // Recover 提前拦截前端业务恐慌
 func Recover() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		httpRequest, _ := httputil.DumpRequest(c.Request, true)
 		defer func() {
 			if err := recover(); err != nil {
 				if err, ok := err.(*validate.ValidateError); ok {
@@ -36,8 +31,7 @@ func Recover() gin.HandlerFunc {
 					response.ValidationErrors(c, err.Error())
 				} else {
 					stack := stack(3)
-					httpRequest, _ := httputil.DumpRequest(c.Request, true)
-					logger.Printf("[Recovery] %s panic recovered:\n%s\n%s\n%s%s", time.Now().Format("2006/01/02 - 15:04:05"), httpRequest, err, stack)
+					logx.Channel(logx.Panic).Printf("[Recovery] %s\r\n\r\n panic recovered:\n%s\n%s%s\r\n\r\n", httpRequest, err, stack)
 					response.FailWithCode(c, response.Error)
 				}
 				//c.Abort()
@@ -92,13 +86,4 @@ func function(pc uintptr) []byte {
 	}
 	name = bytes.Replace(name, centerDot, dot, -1)
 	return name
-}
-
-func GetRotateLogs(dir string) *rotatelogs.RotateLogs {
-	logf, _ := rotatelogs.New(
-		"./log/"+dir+"/%Y-%m-%d.log",
-		rotatelogs.WithMaxAge(720*time.Hour),
-		rotatelogs.WithRotationTime(time.Hour),
-	)
-	return logf
 }

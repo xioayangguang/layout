@@ -2,9 +2,9 @@ debug: true
 loglevel: debug
 env: local
 http:
-  port: 80
+  port: 8089
 mysql:
-  user: root:root@tcp(127.0.0.1:3306)/user?charset=utf8mb4&parseTime=True&loc=Local
+  user: root:root@tcp(127.0.0.1:3306)/yoyo_test?charset=utf8mb4&parseTime=True&loc=Local
   max-idle-conns: 10
   max-open-conns: 10
 

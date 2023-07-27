@@ -40,6 +40,7 @@ func TestUserHandler_Login(t *testing.T) {
 		t.Fatalf("构建请求失败, err: %v", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("sign", "debug-mode-ignore")
 	// 构造一个记录
 	rec := httptest.NewRecorder()
 	// 调用web服务的方法
