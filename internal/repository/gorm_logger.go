@@ -41,7 +41,7 @@ func (l *gormLogger) Error(ctx context.Context, s string, args ...interface{}) {
 	logx.Channel(logx.Database).WithContext(ctx).Warnf(s, args)
 }
 
-// type Fields map[string]interface{}
+// Trace type Fields map[string]interface{}
 func (l *gormLogger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
 	elapsed := time.Since(begin)
 	sql, _ := fc()

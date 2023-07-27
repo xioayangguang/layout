@@ -34,7 +34,6 @@ func Recover() gin.HandlerFunc {
 					logx.Channel(logx.Panic).Printf("[Recovery] %s\r\n\r\n panic recovered:\n%s\n%s%s\r\n\r\n", httpRequest, err, stack)
 					response.FailWithCode(c, response.Error)
 				}
-				//c.Abort()
 			}
 		}()
 		c.Next()
