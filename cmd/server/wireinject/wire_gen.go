@@ -18,7 +18,7 @@ import (
 )
 
 import (
-	_ "layout/pkg/monitor"
+	_ "layout/pkg/pprof"
 )
 
 // Injectors from wire.go:

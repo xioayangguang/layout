@@ -1,4 +1,4 @@
-package monitor
+package pprof
 
 import (
 	"fmt"

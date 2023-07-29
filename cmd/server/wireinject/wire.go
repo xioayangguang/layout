@@ -12,7 +12,7 @@ import (
 	"layout/internal/repository"
 	"layout/internal/router"
 	"layout/internal/service"
-	_ "layout/pkg/monitor"
+	_ "layout/pkg/pprof"
 )
 
 var HandlerSet = wire.NewSet(handler.ProviderSet,
