@@ -6,6 +6,7 @@ import (
 	"layout/pkg/helper/rotatelogs"
 	"layout/pkg/logx/formatter"
 	"layout/pkg/logx/hook"
+	"sync"
 	"time"
 )
 
@@ -22,11 +23,13 @@ var loggerFormatter = map[string]logrus.Formatter{
 	Panic:   &formatter.OnlyMsgFormatter{},
 }
 
-var loggerMap = map[string]*logrus.Logger{}
+// var loggerMap = map[string]*logrus.Logger{}
+var m sync.Map
 
 func Channel(channel string) *logrus.Logger {
-	if logger, ok := loggerMap[channel]; ok {
-		return logger
+	c, ok := m.Load(channel)
+	if ok {
+		return c.(*logrus.Logger)
 	} else {
 		var channelLogger = logrus.New()
 		channelLogger.SetOutput(rotatelogs.GetRotateLogs(channel))
@@ -41,9 +44,30 @@ func Channel(channel string) *logrus.Logger {
 			})
 		}
 		channelLogger.Hooks.Add(&hook.ErrorHook{})
-		loggerMap[channel] = channelLogger
+		m.Store(channel, channelLogger)
 		return channelLogger
 	}
+	//
+	//if logger, ok := loggerMap[channel]; ok {
+	//	return logger
+	//} else {
+	//	var channelLogger = logrus.New()
+	//	channelLogger.SetOutput(rotatelogs.GetRotateLogs(channel))
+	//	channelLogger.SetLevel(getLevel(global.Config.LogLevel))
+	//
+	//	if f, ok := loggerFormatter[channel]; ok {
+	//		channelLogger.SetFormatter(f)
+	//	} else {
+	//		channelLogger.SetFormatter(&logrus.JSONFormatter{
+	//			TimestampFormat:   time.RFC3339,
+	//			PrettyPrint:       false,
+	//			DisableHTMLEscape: true,
+	//		})
+	//	}
+	//	channelLogger.Hooks.Add(&hook.ErrorHook{})
+	//	loggerMap[channel] = channelLogger
+	//	return channelLogger
+	//}
 }
 
 func getLevel(level string) logrus.Level {
