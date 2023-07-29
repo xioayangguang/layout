@@ -33,20 +33,22 @@ func init() {
 					cpuFile, err = os.OpenFile(fmt.Sprintf("./log/pprof/%s-cpu%v.pprof", time.Now().Format("01-02-15-4-5"), int(cpuPercent[0])), os.O_CREATE|os.O_WRONLY, 0666)
 					if err != nil {
 						fmt.Println(err)
-						return
+						continue
 					}
 					err = pprof.StartCPUProfile(cpuFile)
 					if err != nil {
 						fmt.Println(err)
+						continue
 					}
 					memFile, err = os.OpenFile(fmt.Sprintf("./log/pprof/%s-mem%v.pprof", time.Now().Format("01-02-15-4-5"), int(v.UsedPercent)), os.O_CREATE|os.O_WRONLY, 0666)
 					if err != nil {
 						fmt.Println(err)
-						return
+						continue
 					}
 					err = pprof.WriteHeapProfile(memFile)
 					if err != nil {
 						fmt.Println(err)
+						continue
 					}
 					monitorStartTime = time.Now().Unix()
 					monitorState = false
@@ -61,12 +63,12 @@ func init() {
 					err = cpuFile.Close()
 					if err != nil {
 						fmt.Println(err)
-						return
+						continue
 					}
 					err = memFile.Close()
 					if err != nil {
 						fmt.Println(err)
-						return
+						continue
 					}
 					fmt.Println("结束")
 				}
