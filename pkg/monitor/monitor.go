@@ -54,8 +54,7 @@ func init() {
 					monitorState = false
 					fmt.Println("开始")
 				}
-			}
-			if !monitorState {
+			} else {
 				if (v.UsedPercent < 80 && cpuPercent[0] < 80) || (monitorStartTime+30 < time.Now().Unix()) {
 					pprof.StopCPUProfile()
 					monitorStartTime = 0
