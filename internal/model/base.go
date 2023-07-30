@@ -1,14 +1,9 @@
 package model
 
 import (
-	"github.com/pkg/errors"
 	"gorm.io/gorm"
 	"layout/pkg/helper/snowflake"
 	"time"
-)
-
-const (
-	UpdateFailedError = "affected rows:0"
 )
 
 type Base struct {
@@ -22,8 +17,8 @@ func (u *Base) BeforeCreate(tx *gorm.DB) (err error) {
 	if u.Id == 0 {
 		u.Id = snowflake.GlobalSnowflake.Generate().UInt64()
 	}
-	tx.Statement.SetColumn("UpdateTime", time.Now().Unix())
-	tx.Statement.SetColumn("CreateTime", time.Now().Unix())
+	tx.Statement.SetColumn("UpdatedAt", time.Now().Unix())
+	tx.Statement.SetColumn("CreatedAt", time.Now().Unix())
 	return
 }
 
@@ -32,24 +27,6 @@ func (u *Base) BeforeSave(tx *gorm.DB) (err error) {
 	return
 }
 func (u *Base) BeforeUpdate(tx *gorm.DB) (err error) {
-	tx.Statement.SetColumn("UpdateTime", time.Now().Unix())
-	return
-}
-func (u *Base) CheckUpdateError(tx *gorm.DB) (err error) {
-	if tx.Error != nil {
-		return tx.Error
-	}
-	if tx.RowsAffected == 0 {
-		return errors.New(UpdateFailedError)
-	}
-	return nil
-}
-
-type BaseUpdateTimePo struct {
-	UpdateTime int64 `gorm:"column:update_time"`
-}
-
-func (u *BaseUpdateTimePo) BeforeUpdate(tx *gorm.DB) (err error) {
-	tx.Statement.SetColumn("UpdateTime", time.Now().Unix())
+	tx.Statement.SetColumn("UpdatedAt", time.Now().Unix())
 	return
 }

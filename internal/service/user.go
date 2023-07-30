@@ -12,6 +12,7 @@ import (
 	"layout/pkg/berror"
 	"layout/pkg/contextValue"
 	"layout/pkg/helper/idBuilder"
+	"layout/pkg/helper/md5"
 	"strconv"
 	"time"
 )
@@ -70,8 +71,8 @@ func (s *userService) Login(ctx context.Context, req *LoginRequest) (string, err
 				}))
 				userModel.InvitationCode = idBuilder.Id2Code(int(userModel.Serial))
 				userModel.Uuid = idBuilder.From32To10(userModel.InvitationCode)
-				//userModel.Nickname = "SAG_" + strconv.Itoa(int(userModel.Uuid))
-				userModel.Nickname = req.Nickname
+				userModel.Nickname = "SAG_" + strconv.Itoa(int(userModel.Uuid))
+				//userModel.Nickname = req.Nickname
 				return s.userRepo.Create(ctx, userModel)
 			}
 			return berror.New(response.LoginError)
@@ -111,8 +112,7 @@ func (s *userService) UpdateProfile(ctx context.Context, userId uint64, req *Upd
 func (s *userService) GenerateToken(ctx context.Context, userInfo *model.User) string {
 	channel := "app"                        //此处演示写死
 	var duration time.Duration = 86400 * 30 //此处演示写死
-	//token := md5.Md5(strconv.Itoa(int(time.Now().UnixNano())) + strconv.Itoa(int(userInfo.Id)))
-	token := "md5.Md5(strconv.Itoa(int(time.Now().UnixNano())) + strconv.Itoa(int(userInfo.Id)))"
+	token := md5.Md5(strconv.Itoa(int(time.Now().UnixNano())) + strconv.Itoa(int(userInfo.Id)))
 	jsonStr, _ := json.Marshal(contextValue.LoginUserInfo{
 		Id:             userInfo.Id,
 		Nickname:       userInfo.Nickname,
