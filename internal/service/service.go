@@ -1,6 +1,10 @@
 package service
 
-import "github.com/google/wire"
+import (
+	"context"
+	"github.com/google/wire"
+	"gorm.io/gorm"
+)
 
 var ProviderSet = wire.NewSet(
 	NewService,
@@ -8,8 +12,18 @@ var ProviderSet = wire.NewSet(
 )
 
 type Service struct {
+	db *gorm.DB
 }
 
-func NewService() *Service {
-	return &Service{}
+func (s *Service) transaction(ctx context.Context, callBack func(ctx context.Context, tx *gorm.DB) error) error {
+	return s.db.Transaction(func(tx *gorm.DB) error {
+		ctx = context.WithValue(ctx, "tx", tx)
+		return callBack(ctx, tx)
+	})
+}
+
+func NewService(db *gorm.DB) *Service {
+	return &Service{
+		db: db,
+	}
 }

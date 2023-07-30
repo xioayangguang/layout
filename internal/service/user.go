@@ -3,13 +3,15 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"gorm.io/gorm"
 	"layout/global"
 	"layout/internal/model"
 	"layout/internal/repository"
 	"layout/internal/response"
 	"layout/pkg/berror"
 	"layout/pkg/contextValue"
-	"layout/pkg/helper/md5"
+	"layout/pkg/helper/idBuilder"
 	"strconv"
 	"time"
 )
@@ -21,7 +23,7 @@ type RegisterRequest struct {
 }
 
 type LoginRequest struct {
-	Username string `json:"username" binding:"required"` //ddddd
+	Nickname string `json:"username" binding:"required"` //ddddd
 	Password string `json:"password" binding:"required"`
 }
 
@@ -40,7 +42,7 @@ type UserService interface {
 	Login(ctx context.Context, req *LoginRequest) (string, error)
 	GetProfile(ctx context.Context, userId uint64) (*model.User, error)
 	UpdateProfile(ctx context.Context, userId uint64, req *UpdateProfileRequest) error
-	GenerateToken(ctx context.Context, userInfo *model.User) (string, error)
+	GenerateToken(ctx context.Context, userInfo *model.User) string
 }
 
 type userService struct {
@@ -57,18 +59,29 @@ func NewUserService(service *Service, userRepo repository.UserRepository) UserSe
 
 // Login 登录
 func (s *userService) Login(ctx context.Context, req *LoginRequest) (string, error) {
-	user, err := s.userRepo.GetByUsername(ctx, req.Username)
-	if err != nil || user == nil {
+	userModel := &model.User{}
+	var err error
+	if s.transaction(ctx, func(ctx context.Context, tx *gorm.DB) error {
+		userModel, err = s.userRepo.GetByUsername(ctx, req.Nickname)
+		if err != nil {
+			if ok := errors.Is(err, gorm.ErrRecordNotFound); ok {
+				userModel.Serial = uint(idBuilder.Generate("user_id_id_builder", func() int {
+					return s.userRepo.GetMaxSerial(ctx)
+				}))
+				userModel.InvitationCode = idBuilder.Id2Code(int(userModel.Serial))
+				userModel.Uuid = idBuilder.From32To10(userModel.InvitationCode)
+				//userModel.Nickname = "SAG_" + strconv.Itoa(int(userModel.Uuid))
+				userModel.Nickname = req.Nickname
+				return s.userRepo.Create(ctx, userModel)
+			}
+			return berror.New(response.LoginError)
+		} else {
+			return nil
+		}
+	}) != nil {
 		return "", berror.New(response.LoginError)
 	}
-	if req.Password == "123456" {
-		token, _ := s.GenerateToken(ctx, user)
-		return token, nil
-	}
-	if req.Password == "1234567" {
-		panic("你的系统崩溃了") //测试奔溃日志
-	}
-	return "", berror.New(response.LoginError)
+	return s.GenerateToken(ctx, userModel), nil
 }
 
 // GetProfile 获取用户信息
@@ -95,10 +108,11 @@ func (s *userService) UpdateProfile(ctx context.Context, userId uint64, req *Upd
 }
 
 // GenerateToken 生成用户token
-func (s *userService) GenerateToken(ctx context.Context, userInfo *model.User) (string, error) {
+func (s *userService) GenerateToken(ctx context.Context, userInfo *model.User) string {
 	channel := "app"                        //此处演示写死
 	var duration time.Duration = 86400 * 30 //此处演示写死
-	token := md5.Md5(strconv.Itoa(int(time.Now().UnixNano())) + strconv.Itoa(int(userInfo.Id)))
+	//token := md5.Md5(strconv.Itoa(int(time.Now().UnixNano())) + strconv.Itoa(int(userInfo.Id)))
+	token := "md5.Md5(strconv.Itoa(int(time.Now().UnixNano())) + strconv.Itoa(int(userInfo.Id)))"
 	jsonStr, _ := json.Marshal(contextValue.LoginUserInfo{
 		Id:             userInfo.Id,
 		Nickname:       userInfo.Nickname,
@@ -113,5 +127,5 @@ func (s *userService) GenerateToken(ctx context.Context, userInfo *model.User) (
 	}
 	global.Redis.Set(ctx, token, jsonStr, duration*time.Second)
 	global.Redis.HSet(ctx, channel, strUserId, token)
-	return token, nil
+	return token
 }

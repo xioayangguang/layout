@@ -30,7 +30,7 @@ func TestUserHandler_Login(t *testing.T) {
 	r := setupRouter()
 	//构造请求body
 	var data = service.LoginRequest{
-		Username: "zs",
+		Nickname: "zs",
 		Password: "123",
 	}
 	jsonStr, _ := json.Marshal(data)

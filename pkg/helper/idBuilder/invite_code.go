@@ -24,7 +24,7 @@ func from10To32(num int) string {
 }
 
 // From32To10 32进制转10进制 （根据邀请码生成用户的uuid）
-func From32To10(num string) int {
+func From32To10(num string) uint {
 	dict := string(tenToAny) + "0"
 	var newNum float64
 	newNum = 0.0
@@ -38,7 +38,7 @@ func From32To10(num string) int {
 			break
 		}
 	}
-	return int(newNum)
+	return uint(newNum)
 }
 
 // Id2Code 生成邀请码 num为自增的用户id

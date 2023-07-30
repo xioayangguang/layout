@@ -35,14 +35,14 @@ func NewUserHandler(handler *handler.Handler, userService service.UserService) U
 func (h *userHandler) Login(ctx *gin.Context) {
 	var req service.LoginRequest
 	h.ShouldBind(ctx, &req)
-	token, err := h.userService.Login(ctx, &req)
-	if err != nil {
+	if token, err := h.userService.Login(ctx, &req); err != nil {
 		response.FailWithError(ctx, err)
 		return
+	} else {
+		response.OkWithData(ctx, gin.H{
+			"accessToken": token,
+		})
 	}
-	response.OkWithData(ctx, gin.H{
-		"accessToken": token,
-	})
 }
 
 // @Tags 前台用户信息

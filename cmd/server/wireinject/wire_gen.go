@@ -26,8 +26,8 @@ import (
 
 func NewApp() (*gin.Engine, func(), error) {
 	handlerHandler := handler.NewHandler()
-	serviceService := service.NewService()
 	gormDB := db.NewDB()
+	serviceService := service.NewService(gormDB)
 	repositoryRepository := repository.NewRepository(gormDB)
 	userRepository := repository.NewUserRepository(repositoryRepository)
 	userService := service.NewUserService(serviceService, userRepository)

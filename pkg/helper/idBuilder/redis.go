@@ -5,7 +5,7 @@ import (
 	"layout/global"
 )
 
-func IdBuilder(key string, initCallback func() int) int {
+func Generate(key string, initCallback func() int) int {
 	timer := global.Redis.Incr(context.Background(), key)
 	count := timer.Val()
 	if count == 1 {

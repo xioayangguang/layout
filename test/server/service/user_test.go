@@ -57,7 +57,7 @@ func TestUserService_Login(t *testing.T) {
 
 	ctx := context.Background()
 	req := &service.LoginRequest{
-		Username: "testuser",
+		Nickname: "testuser",
 		Password: "password",
 	}
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
@@ -85,11 +85,11 @@ func TestUserService_Login_UserNotFound(t *testing.T) {
 
 	ctx := context.Background()
 	req := &service.LoginRequest{
-		Username: "testuser",
+		Nickname: "testuser",
 		Password: "password",
 	}
 
-	mockUserRepo.EXPECT().GetByUsername(ctx, req.Username).Return(nil, errors.New("user not found"))
+	mockUserRepo.EXPECT().GetByUsername(ctx, req.Nickname).Return(nil, errors.New("user not found"))
 
 	_, err := userService.Login(ctx, req)
 
