@@ -24,14 +24,14 @@ func NewUserRepository(r *Repository) UserRepository {
 	}
 }
 func (r *userRepository) Create(ctx context.Context, user *model.User) error {
-	if err := r.getDb(ctx).WithContext(ctx).Create(user).Error; err != nil {
+	if err := r.getDb(ctx).Create(user).Error; err != nil {
 		return errors.Wrap(err, "failed to create user")
 	}
 	return nil
 }
 
 func (r *userRepository) Update(ctx context.Context, user *model.User) error {
-	if err := r.getDb(ctx).WithContext(ctx).Save(user).Error; err != nil {
+	if err := r.getDb(ctx).Save(user).Error; err != nil {
 		return errors.Wrap(err, "failed to update user")
 	}
 	return nil
@@ -39,7 +39,7 @@ func (r *userRepository) Update(ctx context.Context, user *model.User) error {
 
 func (r *userRepository) GetByID(ctx context.Context, userId uint64) (*model.User, error) {
 	var user model.User
-	if err := r.getDb(ctx).WithContext(ctx).Where("id = ?", userId).First(&user).Error; err != nil {
+	if err := r.getDb(ctx).Where("id = ?", userId).First(&user).Error; err != nil {
 		return nil, errors.Wrap(err, "failed to get user by ID")
 	}
 	return &user, nil
