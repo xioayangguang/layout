@@ -30,11 +30,11 @@ func main() {
 	global.BuildTime = buildTime
 	global.GoVersion = goVersion
 	global.Redis = redis.InitRedis()
-	app, cleanup, err := wireinject.NewApp()
+	engine, cleanup, err := wireinject.NewApp()
 	if err != nil {
 		panic(err)
 	}
 	logx.Channel(logx.Default).Info("server start http://127.0.0.1:", global.Config.Http.Port)
-	http.Run(app, fmt.Sprintf(":%d", global.Config.Http.Port))
+	http.Run(engine, fmt.Sprintf(":%d", global.Config.Http.Port))
 	defer cleanup()
 }

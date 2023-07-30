@@ -15,9 +15,12 @@ import (
 	_ "layout/pkg/pprof"
 )
 
-var HandlerSet = wire.NewSet(handler.ProviderSet,
-	app.ProviderSet, app.StructProvider,
-	h5.ProviderSet, h5.StructProvider,
+var HandlerSet = wire.NewSet(
+	handler.ProviderSet,
+	app.ProviderSet,
+	app.StructProvider,
+	h5.ProviderSet,
+	h5.StructProvider,
 )
 
 func NewApp() (*gin.Engine, func(), error) {

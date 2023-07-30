@@ -15,6 +15,7 @@ import (
 	"layout/internal/repository"
 	"layout/internal/router"
 	"layout/internal/service"
+	"layout/pkg/db"
 )
 
 import (
@@ -26,8 +27,8 @@ import (
 func NewApp() (*gin.Engine, func(), error) {
 	handlerHandler := handler.NewHandler()
 	serviceService := service.NewService()
-	db := repository.NewDB()
-	repositoryRepository := repository.NewRepository(db)
+	gormDB := db.NewDB()
+	repositoryRepository := repository.NewRepository(gormDB)
 	userRepository := repository.NewUserRepository(repositoryRepository)
 	userService := service.NewUserService(serviceService, userRepository)
 	userHandler := app.NewUserHandler(handlerHandler, userService)

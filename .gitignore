@@ -1,5 +1,6 @@
 storage
 .idea
 *.log
+*.pprof
 deploy/docker-compose/conf
 deploy/docker-compose/data

@@ -1,16 +1,16 @@
 package http
 
 import (
-	"github.com/gin-gonic/gin"
 	"log"
+	"net/http"
 )
 
 type server interface {
 	ListenAndServe() error
 }
 
-func Run(r *gin.Engine, addr string) {
-	s := initServer(addr, r)
+func Run(handler http.Handler, addr string) {
+	s := initServer(addr, handler)
 	if err := s.ListenAndServe(); err != nil {
 		log.Fatalf("listen: %s\n", err)
 	}
