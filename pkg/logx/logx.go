@@ -23,7 +23,6 @@ var loggerFormatter = map[string]logrus.Formatter{
 	Panic:   &formatter.OnlyMsgFormatter{},
 }
 
-// var loggerMap = map[string]*logrus.Logger{}
 var m sync.Map
 
 func Channel(channel string) *logrus.Logger {
@@ -47,27 +46,6 @@ func Channel(channel string) *logrus.Logger {
 		m.Store(channel, channelLogger)
 		return channelLogger
 	}
-	//
-	//if logger, ok := loggerMap[channel]; ok {
-	//	return logger
-	//} else {
-	//	var channelLogger = logrus.New()
-	//	channelLogger.SetOutput(rotatelogs.GetRotateLogs(channel))
-	//	channelLogger.SetLevel(getLevel(global.Config.LogLevel))
-	//
-	//	if f, ok := loggerFormatter[channel]; ok {
-	//		channelLogger.SetFormatter(f)
-	//	} else {
-	//		channelLogger.SetFormatter(&logrus.JSONFormatter{
-	//			TimestampFormat:   time.RFC3339,
-	//			PrettyPrint:       false,
-	//			DisableHTMLEscape: true,
-	//		})
-	//	}
-	//	channelLogger.Hooks.Add(&hook.ErrorHook{})
-	//	loggerMap[channel] = channelLogger
-	//	return channelLogger
-	//}
 }
 
 func getLevel(level string) logrus.Level {
