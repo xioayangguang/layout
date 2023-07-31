@@ -11,6 +11,10 @@ import (
 	"layout/internal/job"
 )
 
+import (
+	_ "layout/pkg/pprof"
+)
+
 // Injectors from wire.go:
 
 func NewApp() (*job.Job, func(), error) {

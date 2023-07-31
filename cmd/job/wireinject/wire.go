@@ -6,6 +6,7 @@ package wireinject
 import (
 	"github.com/google/wire"
 	"layout/internal/job"
+	_ "layout/pkg/pprof"
 )
 
 var JobSet = wire.NewSet(job.NewJob)
