@@ -4,13 +4,13 @@
 package http
 
 import (
+	"github.com/fvbock/endless"
 	"log"
+	"net/http"
 	"os"
 	"strconv"
 	"syscall"
 	"time"
-
-	"github.com/fvbock/endless"
 )
 
 func initServer(address string, handler http.Handler) server {

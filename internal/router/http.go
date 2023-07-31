@@ -15,7 +15,8 @@ func NewServerHTTP(apphandler *apphandler.Router, h5handler *h5handler.Router) *
 	if !global.Config.Debug {
 		gin.SetMode(gin.ReleaseMode)
 		r = gin.New()
-		r.Use(gin.LoggerWithWriter(rotatelogs.GetRotateLogs("output")), gin.RecoveryWithWriter(rotatelogs.GetRotateLogs("recovery")))
+		//r.Use(gin.LoggerWithWriter(rotatelogs.GetRotateLogs("output")))
+		r.Use(gin.RecoveryWithWriter(rotatelogs.GetRotateLogs("recovery")))
 	} else {
 		r = gin.Default()
 	}
