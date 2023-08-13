@@ -19,11 +19,20 @@ type Repository struct {
 
 func (r *Repository) getDb(ctx context.Context) (dbHandler *gorm.DB) {
 	dbHandler, ok := ctx.Value("tx").(*gorm.DB)
+
+	//context.valueCtx{}
+	//ctx.Value()
+
+	//context.WithValue()
+	//context.WithCancel()
+	//context.WithDeadline()
+	//ctx.
+
 	if !ok {
 		dbHandler = r.db
 	}
-	dbHandler.WithContext(ctx)
-	return dbHandler
+
+	return dbHandler.WithContext(ctx)
 }
 
 func NewRepository(db *gorm.DB) *Repository {
