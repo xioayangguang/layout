@@ -33,6 +33,12 @@ func NewUserHandler(handler *handler.Handler, userService service.UserService) U
 // @Success 200 {string} string "{"code":0,"data":{},"msg":"获取成功"}"
 // @Router /api/user/login [post]
 func (h *userHandler) Login(ctx *gin.Context) {
+
+	requestId, ok := ctx.Value("Request-Id").(string)
+
+	_ = requestId
+	_ = ok
+
 	var req service.LoginRequest
 	h.ShouldBind(ctx, &req)
 	if token, err := h.userService.Login(ctx, &req); err != nil {

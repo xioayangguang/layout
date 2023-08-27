@@ -29,6 +29,7 @@ func MustTokenAuth() gin.HandlerFunc {
 				response.FailWithCode(c, response.Error)
 				c.Abort()
 			} else {
+				//todo  设置在普通上下文里面，不要依赖gin
 				c.Set("u_id", userInfo.Id)
 				c.Set("u_info", userInfo)
 				c.Next()

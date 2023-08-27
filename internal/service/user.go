@@ -62,7 +62,7 @@ func NewUserService(service *Service, userRepo repository.UserRepository) UserSe
 func (s *userService) Login(ctx context.Context, req *LoginRequest) (string, error) {
 	userModel := &model.User{}
 	var err error
-	if s.transaction(ctx, func(ctx context.Context, tx *gorm.DB) error {
+	if s.transaction(ctx, func(ctx context.Context) error {
 		userModel, err = s.userRepo.GetByUsername(ctx, req.Nickname)
 		if err != nil {
 			if ok := errors.Is(err, gorm.ErrRecordNotFound); ok {
