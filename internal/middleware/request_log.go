@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -96,11 +97,9 @@ func RequestLog() gin.HandlerFunc {
 }
 
 func requestBefore(ctx *gin.Context) {
-
 	requestID := snowflake.GlobalSnowflake.Generate().String()
-	//c := context.WithValue(ctx.Request.Context(), "Request-Id", requestID)
-	//ctx.Request = ctx.Request.WithContext(c)
-
+	c := context.WithValue(ctx.Request.Context(), "Request-Id", requestID)
+	ctx.Request = ctx.Request.WithContext(c)
 	httpRequest, _ := httputil.DumpRequest(ctx.Request, true)
 	logStr = fmt.Sprintf("requestID:%v\r\n", requestID)
 	logStr = fmt.Sprintf("%v%v\r\n", logStr, string(httpRequest))
@@ -120,7 +119,7 @@ func requestAfter(ctx *gin.Context) {
 	strB.WriteString(string(bw.bodyCache.Bytes()))
 	logStr = fmt.Sprintf("%v%v\r\n", logStr, strB.String())
 	logStr = fmt.Sprintf("%v%v\r\n", logStr, strings.Repeat("-", 100))
-	if requestId, ok := ctx.Value("Request-Id").(string); ok {
+	if requestId, ok := ctx.Request.Context().Value("Request-Id").(string); ok {
 		sqls := db.GetAllSql(requestId)
 		sqlLog, _ := json.Marshal(sqls)
 		logStr = fmt.Sprintf("%v%v\r\n\r\n", logStr, string(sqlLog))

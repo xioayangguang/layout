@@ -33,15 +33,9 @@ func NewUserHandler(handler *handler.Handler, userService service.UserService) U
 // @Success 200 {string} string "{"code":0,"data":{},"msg":"获取成功"}"
 // @Router /api/user/login [post]
 func (h *userHandler) Login(ctx *gin.Context) {
-
-	requestId, ok := ctx.Value("Request-Id").(string)
-
-	_ = requestId
-	_ = ok
-
 	var req service.LoginRequest
 	h.ShouldBind(ctx, &req)
-	if token, err := h.userService.Login(ctx, &req); err != nil {
+	if token, err := h.userService.Login(ctx.Request.Context(), &req); err != nil {
 		response.FailWithError(ctx, err)
 		return
 	} else {
@@ -59,7 +53,7 @@ func (h *userHandler) Login(ctx *gin.Context) {
 // @Router /api/user/info [get]
 func (h *userHandler) GetProfile(ctx *gin.Context) {
 	userId := h.GetUserId(ctx)
-	user, err := h.userService.GetProfile(ctx, userId)
+	user, err := h.userService.GetProfile(ctx.Request.Context(), userId)
 	if err != nil {
 		response.FailWithError(ctx, err)
 		return
@@ -78,7 +72,7 @@ func (h *userHandler) UpdateProfile(ctx *gin.Context) {
 	userId := h.GetUserId(ctx)
 	var req service.UpdateProfileRequest
 	h.ShouldBind(ctx, &req)
-	if err := h.userService.UpdateProfile(ctx, userId, &req); err != nil {
+	if err := h.userService.UpdateProfile(ctx.Request.Context(), userId, &req); err != nil {
 		response.FailWithError(ctx, err)
 		return
 	}
