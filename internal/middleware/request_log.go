@@ -114,16 +114,23 @@ func requestAfter(ctx *gin.Context) {
 		logStr = fmt.Sprintf("%v%v: %v\r\n", logStr, k, strings.Join(v, ","))
 	}
 	logStr = fmt.Sprintf("%vContent-Length: %v\r\n\r\n", logStr, ctx.Writer.Size())
-	bw, _ := ctx.Writer.(*bodyWriter)
-	var strB strings.Builder
-	strB.WriteString(string(bw.bodyCache.Bytes()))
-	logStr = fmt.Sprintf("%v%v\r\n", logStr, strB.String())
-	logStr = fmt.Sprintf("%v%v\r\n", logStr, strings.Repeat("-", 100))
-	if requestId, ok := ctx.Request.Context().Value("Request-Id").(string); ok {
-		sqls := db.GetAllSql(requestId)
-		sqlLog, _ := json.Marshal(sqls)
-		logStr = fmt.Sprintf("%v%v\r\n\r\n", logStr, string(sqlLog))
-		db.ClearSql(requestId)
+	bw, ok := ctx.Writer.(*bodyWriter)
+	if ok {
+		var strB strings.Builder
+		strB.WriteString(string(bw.bodyCache.Bytes()))
+		logStr = fmt.Sprintf("%v%v\r\n", logStr, strB.String())
+		logStr = fmt.Sprintf("%v%v\r\n", logStr, strings.Repeat("-", 100))
+	}
+	c := ctx.Request.Context()
+	if c != nil {
+		if requestId, ok := c.Value("Request-Id").(string); ok {
+			sqls := db.GetAllSql(requestId)
+			if sqls != nil {
+				sqlLog, _ := json.Marshal(sqls)
+				logStr = fmt.Sprintf("%v%v\r\n\r\n", logStr, string(sqlLog))
+				db.ClearSql(requestId)
+			}
+		}
 	}
 	logx.Channel(logx.Request).Warning(logStr)
 }

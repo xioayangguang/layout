@@ -4,13 +4,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"layout/internal/handler/app"
 	"layout/internal/middleware"
+	"time"
 )
 
 const SignSalt = "T^N5kJDOJ7seK3Z$"
 
+const Timeout = 500 * time.Millisecond
+
 func InitAppRouter(Router *gin.Engine, router *app.Router) {
 	ApiRouter := Router.Group("api")
 	ApiRouter.Use(middleware.RequestLog())
+	ApiRouter.Use(middleware.Timeout(Timeout))
 	ApiRouter.Use(middleware.Sign(SignSalt))
 	//全局分布式限速
 	//ApiRouter.Use(middleware.SpeedLimit())

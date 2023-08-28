@@ -44,6 +44,10 @@ func before(db *gorm.DB) {
 }
 
 func after(db *gorm.DB) {
+	c := db.Statement.Context
+	if c == nil {
+		return
+	}
 	_ts, isExist := db.InstanceGet(startTime)
 	if !isExist {
 		return
@@ -58,7 +62,7 @@ func after(db *gorm.DB) {
 	sqlInfo.Stack = utils.FileWithLineNum()
 	sqlInfo.Rows = db.Statement.RowsAffected
 	sqlInfo.CostSeconds = time.Since(ts).Seconds()
-	if requestId, ok := db.Statement.Context.Value("Request-Id").(string); ok {
+	if requestId, ok := c.Value("Request-Id").(string); ok {
 		AppendSql(sqlInfo, requestId)
 	}
 }

@@ -4,13 +4,17 @@ import (
 	"github.com/gin-gonic/gin"
 	"layout/internal/handler/h5"
 	"layout/internal/middleware"
+	"time"
 )
 
 const SignSalt = "bWAOoXvIqxeiqk6*"
 
+const Timeout = 500 * time.Millisecond
+
 func InitH5Router(Router *gin.Engine, router *h5.Router) {
 	H5Router := Router.Group("h5")
 	H5Router.Use(middleware.RequestLog())
+	H5Router.Use(middleware.Timeout(Timeout))
 	H5Router.Use(middleware.CORSMiddleware())
 	H5Router.Use(middleware.Sign(SignSalt))
 	H5Router.Use(middleware.SpeedLimit())
